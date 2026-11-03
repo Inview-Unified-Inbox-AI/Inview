@@ -1,0 +1,69 @@
+name: CI
+
+# Runs on every pull request into main or production, and on every push to main.
+# Make the two jobs below "required" in the branch ruleset so nobody can merge a red PR.
+
+on:
+  pull_request:
+    branches: [main, production]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Lint, types and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Cache Turborepo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: turbo-${{ runner.os }}-
+
+      - run: npm run lint
+      - run: npm run check-types
+      - run: npm run build
+
+  # Starts a throwaway Supabase in Docker and replays every migration from zero.
+  # If a migration is broken, or conflicts with another one, this job turns red.
+  supabase-local:
+    name: Supabase migrations (local check)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 3.0.0
+
+      - name: Start local Supabase
+        run: supabase start
+
+      - name: Replay all migrations and seed data
+        run: supabase db reset
+
+      - name: Lint the database for common mistakes
+        run: supabase db lint --level warning --fail-on error
+
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop --no-backup

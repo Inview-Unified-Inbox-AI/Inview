@@ -1,0 +1,3 @@
+-- Fake data for LOCAL development only.
+-- This file runs every time you run `npm run db:reset`.
+-- Never put real customer data or real passwords here.
