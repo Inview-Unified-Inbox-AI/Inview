@@ -27,7 +27,7 @@ jobs:
       # package.json pins devEngines.packageManager to an exact npm version, and npm
       # refuses to run on any other (even 11.19.1 vs 11.19.0). So install that exact npm.
       # We do not use setup-node's `cache: npm` because it runs npm before we can fix the version.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
 
