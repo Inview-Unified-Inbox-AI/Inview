@@ -1,5 +1,12 @@
 name: Supabase - migrate Production
 
+# SECURITY: the PR trigger is pull_request_target on purpose. GitHub then always runs THIS file
+# as it exists on the production branch, so a pull request cannot edit the workflow to steal the
+# production credentials. The PR's migration .sql files are copied in as plain data and are never run
+# as code (see .github/actions/pr-migrations). Also restrict the "production" and "production-preview"
+# environments to the production branch only (Settings -> Environments -> Deployment branches).
+# NOTE: this workflow must already exist on the production branch before it can run for a PR.
+#
 # Flow for a PR from main into production:
 #   1. "Dry run"  runs by itself and only SHOWS what would change. Nothing is changed.
 #   2. "Apply"    waits until the owner clicks Approve (GitHub Environment "production"),
@@ -9,7 +16,7 @@ name: Supabase - migrate Production
 # After the merge, "Verify" double-checks that Production has no waiting migrations.
 
 on:
-  pull_request:
+  pull_request_target:
     branches: [production]
   push:
     branches: [production]
@@ -25,10 +32,11 @@ permissions:
 jobs:
   dry-run:
     name: Dry run on Production DB
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request_target'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     # "production-preview" holds the same secrets as "production" but has no approval step.
+    # It is safe only because this workflow always comes from the production branch.
     environment: production-preview
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
@@ -36,6 +44,12 @@ jobs:
       SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Load the PR's migration files (data only)
+        if: github.event_name == 'pull_request_target'
+        uses: ./.github/actions/pr-migrations
+        with:
+          head-sha: ${{ github.event.pull_request.head.sha }}
 
       - uses: supabase/setup-cli@v1
         with:
@@ -51,8 +65,8 @@ jobs:
     # Runs after a successful dry run (PR), or on its own for a manual run.
     if: >-
       always() && (
-        github.event_name == 'workflow_dispatch' ||
-        (github.event_name == 'pull_request' && needs.dry-run.result == 'success')
+        (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/production') ||
+        (github.event_name == 'pull_request_target' && needs.dry-run.result == 'success')
       )
     needs: [dry-run]
     runs-on: ubuntu-latest
@@ -65,6 +79,12 @@ jobs:
       SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Load the PR's migration files (data only)
+        if: github.event_name == 'pull_request_target'
+        uses: ./.github/actions/pr-migrations
+        with:
+          head-sha: ${{ github.event.pull_request.head.sha }}
 
       - uses: supabase/setup-cli@v1
         with:

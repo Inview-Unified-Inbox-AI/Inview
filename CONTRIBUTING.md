@@ -441,6 +441,9 @@ Repo **Settings -> Environments -> New environment**. Create three:
 Notes:
 
 - `production-preview` exists only so the harmless dry run does not need a click. `production` is where the approval gate is.
+- **Lock both `production` and `production-preview` to the `production` branch:** in each environment, under *Deployment branches and tags*, choose *Selected branches and tags* and add `production`. Without this, anyone with write access could run an edited copy of the workflow from their own branch and read the production password.
+- The production workflow uses `pull_request_target`, so GitHub always runs the copy that is on the `production` branch, never a copy edited inside a PR. It only copies the PR's `.sql` migration files in as plain text (see `.github/actions/pr-migrations`). **The workflow file must already be on the `production` branch before it can run**: create the `production` branch from `main` after this is merged.
+- Changes to anything in `.github/` are security-sensitive. Review them with extra care.
 - Leave **"Prevent self-review"** unticked for `production`, since you are the only reviewer (otherwise you could never approve your own PR's deployment).
 - Never print secrets in a workflow. The workflows in this repo do not.
 

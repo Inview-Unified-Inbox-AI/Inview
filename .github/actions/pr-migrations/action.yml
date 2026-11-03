@@ -1,0 +1,30 @@
+name: Load migrations from the pull request
+description: >-
+  Copies ONLY the migration .sql files from a pull request into the trusted checkout.
+  Nothing from the pull request is executed. The workflow file and supabase/config.toml
+  always come from the base branch.
+
+inputs:
+  head-sha:
+    description: Commit SHA of the pull request head
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        HEAD_SHA: ${{ inputs.head-sha }}
+      run: |
+        set -euo pipefail
+        git fetch --no-tags --depth=1 origin "$HEAD_SHA"
+        mkdir -p supabase/migrations
+        # Make the migration set identical to the PR (this also removes files the PR deleted).
+        find supabase/migrations -maxdepth 1 -name '*.sql' -delete
+        git ls-tree -r --name-only "$HEAD_SHA" -- supabase/migrations \
+          | grep -E '^supabase/migrations/[0-9]{14}_[A-Za-z0-9_]+\.sql$' \
+          | while read -r path; do
+              git show "$HEAD_SHA:$path" > "$path"
+            done || true
+        echo "Migrations that will be used:"
+        ls -1 supabase/migrations
