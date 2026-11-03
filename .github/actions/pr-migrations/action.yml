@@ -21,10 +21,13 @@ runs:
         mkdir -p supabase/migrations
         # Make the migration set identical to the PR (this also removes files the PR deleted).
         find supabase/migrations -maxdepth 1 -name '*.sql' -delete
-        git ls-tree -r --name-only "$HEAD_SHA" -- supabase/migrations \
-          | grep -E '^supabase/migrations/[0-9]{14}_[A-Za-z0-9_]+\.sql$' \
-          | while read -r path; do
-              git show "$HEAD_SHA:$path" > "$path"
-            done || true
+        # Git failures must fail the job; only grep's "no match" (status 1) is expected.
+        all_paths="$(git ls-tree -r --name-only "$HEAD_SHA" -- supabase/migrations)"
+        migration_paths="$(printf '%s\n' "$all_paths" \
+          | grep -E '^supabase/migrations/[0-9]{14}_[A-Za-z0-9_]+\.sql$' || [ $? -eq 1 ])"
+        while IFS= read -r path; do
+          [ -n "$path" ] || continue
+          git show "$HEAD_SHA:$path" > "$path"
+        done <<< "$migration_paths"
         echo "Migrations that will be used:"
         ls -1 supabase/migrations
