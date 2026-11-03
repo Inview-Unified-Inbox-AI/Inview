@@ -1,0 +1,46 @@
+name: Supabase - migrate Staging
+
+# When a PR is merged into main, push the new migrations to the Staging database.
+# Only this workflow holds the staging database password. People never push to staging by hand.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/**"
+      - ".github/workflows/supabase-staging.yml"
+  workflow_dispatch:
+
+# Never run two migrations at the same time, and never cancel one halfway.
+concurrency:
+  group: supabase-staging
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  migrate:
+    name: Apply migrations to Staging DB
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: staging
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 3.0.0
+
+      - name: Link to the Staging project
+        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+      - name: Show what is about to be applied
+        run: supabase db push --dry-run
+
+      - name: Apply migrations
+        run: supabase db push

@@ -1,0 +1,82 @@
+name: CI
+
+# Runs on every pull request into main or production, and on every push to main.
+# Make the two jobs below "required" in the branch ruleset so nobody can merge a red PR.
+
+on:
+  pull_request:
+    branches: [main, production]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Lint, types and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      # package.json pins devEngines.packageManager to an exact npm version, and npm
+      # refuses to run on any other (even 11.19.1 vs 11.19.0). So install that exact npm.
+      # We do not use setup-node's `cache: npm` because it runs npm before we can fix the version.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install the npm version pinned in package.json
+        working-directory: ${{ runner.temp }}
+        run: npm install -g npm@11.19.0
+
+      - name: Cache npm downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-${{ runner.os }}-
+
+      - run: npm ci
+
+      - name: Cache Turborepo
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: turbo-${{ runner.os }}-
+
+      - run: npm run lint
+      - run: npm run check-types
+      - run: npm run build
+
+  # Starts a throwaway Supabase in Docker and replays every migration from zero.
+  # If a migration is broken, or conflicts with another one, this job turns red.
+  supabase-local:
+    name: Supabase migrations (local check)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 3.0.0
+
+      - name: Start local Supabase
+        run: supabase start
+
+      - name: Replay all migrations and seed data
+        run: supabase db reset
+
+      - name: Lint the database for common mistakes
+        run: supabase db lint --level warning --fail-on error
+
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop --no-backup

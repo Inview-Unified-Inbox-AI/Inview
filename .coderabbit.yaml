@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# CodeRabbit is a helper reviewer. The owner's approval and the CI checks are still required.
+language: en-US
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - main
+      - production
+  path_instructions:
+    - path: "supabase/migrations/**"
+      instructions: |
+        Review every SQL migration like it will run on a live production database.
+        - Flag DROP TABLE, DROP COLUMN, TRUNCATE, and UPDATE or DELETE without a WHERE clause.
+        - Flag renaming or dropping a column that the current app code may still read (migrations must be backward-compatible).
+        - Every new table in the public schema must have ROW LEVEL SECURITY enabled and at least one policy.
+        - Flag foreign keys without an index, and CREATE INDEX on big tables without CONCURRENTLY.
+        - Flag NOT NULL columns added without a DEFAULT.
+        - Flag edits to a migration file that already exists in main; a new migration should be added instead.
+        - File names must come from `supabase migration new` (timestamp_name.sql).
+    - path: "supabase/seed.sql"
+      instructions: "Local fake data only. Flag any real-looking emails, passwords, tokens or customer data."
+    - path: ".github/workflows/**"
+      instructions: "Flag any step that prints secrets, uses pull_request_target, or applies migrations to production without the `production` environment approval."
+    - path: "**/*.{ts,tsx}"
+      instructions: "Flag hard-coded secrets or keys and any use of the Supabase service_role key in browser code."
