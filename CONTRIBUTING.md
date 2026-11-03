@@ -268,7 +268,7 @@ npm run db:lint
 
 1. **Never change a migration that is already merged into `main`.** It has already run on other databases and will not run again. If you made a mistake, write a **new** migration that fixes it.
 2. **Never change the database by clicking in the Supabase website** (the dashboard) for Staging or Production. If it is not in a migration file, it does not exist for the team and will be lost or cause trouble.
-3. **Never push to Staging or Production yourself.** You do not have the passwords on purpose. Robots do it for us after review.
+3. **Never push to Staging or Production yourself.** You do not have the passwords on purpose. Only the robots can use them, and only when they run from the protected `main` or `production` branch (never from your own branch), which only happens after review. Staging and Production use different tokens, so one can never reach the other.
 4. **Make changes that do not break the old code.** For a short time the new database and the old website run together (and the other way round). So:
    - Adding a table or column: safe.
    - Renaming or deleting a column: **do it in two steps**. First release code that stops using the column. Later, in a separate pull request, remove the column.
@@ -425,23 +425,24 @@ The code for all this is in the repository. The **settings** below live on GitHu
 2. For each, write down:
    - **Project ref**: the code in the project URL, `https://supabase.com/dashboard/project/<ref>`.
    - **Database password**: set when creating the project (reset it in *Project Settings -> Database* if lost).
-3. Create one **access token** at https://supabase.com/dashboard/account/tokens. Use a token from an account that can access both projects.
+3. Create **two separate access tokens** at https://supabase.com/dashboard/account/tokens, one named `inview-staging` and one named `inview-production`. Never reuse one token for both. A token can do everything the account that created it can do, so the staging token must come from an account that can reach **only** `Staging_DB`, and the production token from an account that can reach **only** `Production_DB` (for example, two dedicated bot accounts, or two Supabase organizations). That way a leak of the staging token can never touch production, and you can revoke each one on its own.
 4. Production should be on a plan with **backups** (and ideally point-in-time recovery) before real users arrive. Free projects have no backups and pause when idle.
 
 ### 10.2 GitHub Environments (secrets and approvals)
 
 Repo **Settings -> Environments -> New environment**. Create three:
 
-| Environment          | Required reviewer          | Secrets (**secret**)                              | Variable          |
-| -------------------- | -------------------------- | ------------------------------------------------- | ----------------- |
-| `staging`            | none                       | `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`   | `SUPABASE_PROJECT_REF` = Staging ref |
-| `production-preview` | none                       | same names, **Production** values                 | `SUPABASE_PROJECT_REF` = Production ref |
-| `production`         | **you** (tick "Required reviewers") | same names, **Production** values          | `SUPABASE_PROJECT_REF` = Production ref |
+| Environment          | Deployment branches (**Selected branches only**) | Required reviewer | Secrets (**secret**)                                               | Variable          |
+| -------------------- | ------------------------------------------------ | ----------------- | ------------------------------------------------------------------ | ----------------- |
+| `staging`            | **`main` only**                                  | none              | `SUPABASE_ACCESS_TOKEN` = the **staging** token, `SUPABASE_DB_PASSWORD` = Staging | `SUPABASE_PROJECT_REF` = Staging ref |
+| `production-preview` | **`production` only**                            | none              | `SUPABASE_ACCESS_TOKEN` = the **production** token, `SUPABASE_DB_PASSWORD` = Production | `SUPABASE_PROJECT_REF` = Production ref |
+| `production`         | **`production` only**                            | **you** (tick "Required reviewers") | `SUPABASE_ACCESS_TOKEN` = the **production** token, `SUPABASE_DB_PASSWORD` = Production | `SUPABASE_PROJECT_REF` = Production ref |
 
 Notes:
 
 - `production-preview` exists only so the harmless dry run does not need a click. `production` is where the approval gate is.
-- **Lock both `production` and `production-preview` to the `production` branch:** in each environment, under *Deployment branches and tags*, choose *Selected branches and tags* and add `production`. Without this, anyone with write access could run an edited copy of the workflow from their own branch and read the production password.
+- **Set "Deployment branches and tags" on every environment (do not skip this):** in each environment choose *Selected branches and tags*, then add only `main` for `staging`, and only `production` for `production-preview` and `production`. Without it, anyone with write access could run an edited copy of a workflow from their own branch and read the passwords. With it, only workflows running from those protected, reviewed branches can read the secrets.
+- Staging and production use **different** access tokens (see 10.1), so even a leaked staging token cannot reach production.
 - The production workflow uses `pull_request_target`, so GitHub always runs the copy that is on the `production` branch, never a copy edited inside a PR. It only copies the PR's `.sql` migration files in as plain text (see `.github/actions/pr-migrations`). **The workflow file must already be on the `production` branch before it can run**: create the `production` branch from `main` after this is merged.
 - Changes to anything in `.github/` are security-sensitive. Review them with extra care.
 - Leave **"Prevent self-review"** unticked for `production`, since you are the only reviewer (otherwise you could never approve your own PR's deployment).
