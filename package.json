@@ -1,0 +1,41 @@
+{
+  "name": "inview",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:new": "supabase migration new",
+    "db:lint": "supabase db lint --level warning",
+    "db:status": "supabase status"
+  },
+  "devDependencies": {
+    "prettier": "3.9.10",
+    "supabase": "3.0.0",
+    "turbo": "^2.11.10",
+    "typescript": "7.0.2"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "npm",
+      "version": "^11.19.0"
+    }
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "@animate-ui/react": "^2.4.2",
+    "lucide-react": "^1.68.0",
+    "motion": "^14.9.1"
+  }
+}

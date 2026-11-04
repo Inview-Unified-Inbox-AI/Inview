@@ -1,0 +1,30 @@
+/* Shared Tailwind + shadcn theme lives in packages/ui. Edit colors there, not here. */
+@import "@repo/ui/globals.css";
+
+/* Tell Tailwind to also scan the shared UI package for class names. */
+@source "../../../packages/ui/src";
+
+@layer base {
+  html,
+  body {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .imgDark {
+    display: none;
+  }
+
+  .dark .imgLight {
+    display: none;
+  }
+
+  .dark .imgDark {
+    display: unset;
+  }
+}
