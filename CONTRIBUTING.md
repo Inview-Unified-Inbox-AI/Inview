@@ -198,6 +198,28 @@ git merge main
 
 If Git says there is a **conflict**, it means two people changed the same lines. Open the file, look for the `<<<<<<<` marks, choose what the final text should be, delete the marks, then run `git add .` and `git commit`. Not sure? Ask in the group chat. Do not guess.
 
+### Adding a shared UI component (shadcn)
+
+All shadcn components live in **one place**, `packages/ui`, so every app (`product`, `landing-page`, `internal-portal`) can use the same ones. Never keep a copy inside an app.
+
+```bash
+# run from the project's top folder, pick any app after -c (the file still lands in packages/ui)
+npx shadcn@latest add button -c apps/product
+npx shadcn@latest add https://registry.watermelon.sh/r/family-receive-button.json -c apps/product
+```
+
+Use it in any app like this:
+
+```tsx
+import { Button } from "@repo/ui/components/button";
+```
+
+Rules:
+
+- Colors and theme live in `packages/ui/src/styles/globals.css`. Change them there, once.
+- Read a component's code before you add it from a link. It is code from the internet that will run in our app.
+- Check that new packages were added to `packages/ui/package.json` (not to an app).
+
 ---
 
 ## 4. Changing the database (migrations)
@@ -507,7 +529,7 @@ Inview/
 |   |-- landing-page/     the public website      (Next.js)
 |   `-- docs/             documentation site      (Next.js)
 |-- packages/
-|   |-- ui/               shared buttons and components
+|   |-- ui/               shared components (shadcn lives here)
 |   |-- eslint-config/    shared lint rules
 |   `-- typescript-config/shared TypeScript settings
 |-- supabase/
