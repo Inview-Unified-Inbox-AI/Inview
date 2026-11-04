@@ -32,5 +32,11 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@animate-ui/react": "^2.4.2",
+    "lucide-react": "^1.68.0",
+    "motion": "^14.9.1",
+    "react-icon": "^1.0.0"
+  }
 }

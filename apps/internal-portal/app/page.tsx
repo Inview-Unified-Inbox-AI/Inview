@@ -12,6 +12,8 @@ import { FloatingInput } from "@repo/ui/components/floating-input";
 import { ScheduleButton } from "@repo/ui/components/schedule-button";
 import { VoiceChatDisclosure } from "@repo/ui/components/voice-chat-disclosure";
 import { PinItemComponent } from "@repo/ui/components/pin-item";
+import { useTheme } from "next-themes";
+
 import {
   // ChangeablePricingSection,
   Plan,
@@ -27,6 +29,15 @@ import {
   FaSailboat,
   FaUtensils,
 } from "react-icons/fa6";
+import { SwitchMode } from "@repo/ui/components/switch-mode";
+import { Checkbox } from "@animate-ui/react/primitives/base-ui";
+import { CheckCheck, CheckIcon, MoonIcon, SunIcon } from "lucide-react";
+import {
+  ThemeTogglerButton,
+  ThemeTogglerButtonIcon,
+  type Resolved,
+  type ThemeSelection,
+} from "@repo/ui/components/animate-ui/buttons/theme-toggler";
 type Props = Omit<ImageProps, "src"> & {
   srcLight: string;
   srcDark: string;
@@ -88,6 +99,8 @@ export default function Home() {
       },
     ],
   };
+  const { theme, resolvedTheme, setTheme } = useTheme();
+
   const items = [
     {
       id: 1,
@@ -212,6 +225,23 @@ export default function Home() {
               console.log(`Selected: ${planId}, Cycle: ${cycle}`)
             }
           /> */}
+          <label className="flex items-center gap-2">
+            <Checkbox.Root defaultChecked>
+              <Checkbox.Indicator>
+                <CheckIcon />
+              </Checkbox.Indicator>
+            </Checkbox.Root>
+            Accept terms and conditions
+          </label>
+          <ThemeTogglerButton
+            theme={theme as ThemeSelection}
+            resolvedTheme={resolvedTheme as Resolved}
+            setTheme={setTheme}
+            modes={["light", "dark"]}
+            aria-label="Toggle theme"
+          >
+            <ThemeTogglerButtonIcon light={<SunIcon />} dark={<MoonIcon />} />
+          </ThemeTogglerButton>
           <MeetingCard
             title={""}
             date={""}

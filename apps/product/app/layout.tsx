@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
+import { ThemeProvider } from "@repo/ui/components/theme-provider";
+import { ThemeToggle } from "@repo/ui/components/theme-toggle";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -23,8 +25,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${geistMono.variable}`}>
-      <body>{children}</body>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${jakarta.variable} ${geistMono.variable}`}
+    >
+      <body>
+        <ThemeProvider>
+          <ThemeToggle className="fixed top-4 right-4 z-50" />
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
