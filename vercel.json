@@ -1,0 +1,18 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "internal-portal": {
+      "root": "apps/internal-portal",
+      "framework": "nextjs"
+    },
+    "landing-page": {
+      "root": "apps/landing-page",
+      "framework": "nextjs"
+    },
+    "product": {
+      "root": "apps/product",
+      "framework": "nextjs"
+    }
+  },
+  "rewrites": []
+}
