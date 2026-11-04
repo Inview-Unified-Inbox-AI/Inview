@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, MotionConfig } from 'motion/react';
 import { Plus, X, Wallet, Check } from 'lucide-react';
@@ -46,7 +48,13 @@ export const AddCashDisclosure: React.FC<CashDisclosureProps> = ({
 
   const handleConfirm = async () => {
     setIsProcessing(true);
-    await onConfirm(selectedAmount);
+    try {
+      await onConfirm(selectedAmount);
+    } catch (error) {
+      console.error('Add cash failed', error);
+      setIsProcessing(false);
+      return;
+    }
     setIsDone(true);
     setTimeout(() => handleClose(), 1500);
   };

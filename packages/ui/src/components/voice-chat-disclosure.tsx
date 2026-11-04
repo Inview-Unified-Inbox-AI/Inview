@@ -116,10 +116,12 @@ export const VoiceChatDisclosure: React.FC<VoiceChatDisclosureProps> = ({
                   ))}
                 </div>
 
-                <div className="ml-4 flex items-center gap-1 text-lg font-medium text-neutral-600 dark:text-neutral-400">
-                  <span>+{users.length - 4}</span>
-                  <IoChevronDown />
-                </div>
+                {users.length > 4 && (
+                  <div className="ml-4 flex items-center gap-1 text-lg font-medium text-neutral-600 dark:text-neutral-400">
+                    <span>+{users.length - 4}</span>
+                    <IoChevronDown />
+                  </div>
+                )}
               </div>
             ) : (
               <motion.div layout className="flex flex-col">

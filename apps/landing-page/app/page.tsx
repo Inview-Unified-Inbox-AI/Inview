@@ -39,7 +39,12 @@ export default function Home() {
           <li>Save and see your changes instantly.</li>
         </ol>
 
-        <FamilyReceiveComponent />
+        <FamilyReceiveComponent
+          triggerLabel="Open demo dialog"
+          title="Demo"
+          description="This is only a demo of the confirm dialog. Nothing is sent or saved."
+          confirmLabel="Confirm demo"
+        />
 
         <div className={styles.ctas}>
           <a

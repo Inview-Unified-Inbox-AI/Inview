@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { Check, Info } from "lucide-react";
 
 export type PlanId = string;
@@ -105,7 +105,7 @@ export default function ChangeablePricingSection({
                 transition={{ type: "spring", bounce: 0.45, duration: 0.7 }}
                 className={`relative overflow-hidden cursor-pointer rounded-lg transition-colors duration-300 bg-background ${
                   isSelected
-                    ? "ring-1 ring-primary shadow-[0_4px_16px_hsl(var(--foreground)/0.08)]"
+                    ? "ring-1 ring-primary shadow-md"
                     : "ring-1 ring-border shadow-sm hover:ring-border"
                 }`}
               >

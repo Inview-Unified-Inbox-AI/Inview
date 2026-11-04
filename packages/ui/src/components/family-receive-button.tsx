@@ -28,7 +28,7 @@ const springTransition: Transition = {
 export const FamilyReceiveComponent: React.FC<FamilyReceiveComponentProps> = ({
   triggerLabel = 'Receive',
   title = 'Confirm',
-  description = 'Are you sure you want to receive hell load of money?',
+  description = 'Please confirm that you want to receive this payment.',
   confirmLabel = 'Receive',
   cancelLabel = 'Cancel',
   onConfirm,
