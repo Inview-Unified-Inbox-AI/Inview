@@ -31,7 +31,7 @@ reviews:
     - path: "**"
       instructions: |
         PROJECT CONTEXT (read before commenting):
-        - Inview is a Turborepo monorepo (npm workspaces, Node 24) with 3 Next.js apps in apps/ (product, landing-page, docs)
+        - Inview is a Turborepo monorepo (npm workspaces, Node 24) with 3 Next.js apps in apps/ (product, landing-page, internal-portal)
           and shared packages in packages/ (ui, eslint-config, typescript-config). Backend is Supabase.
         - A small team of 5 (a university project). Prefer the simplest solution that works.
         - Environments: Local (Docker + Supabase) -> Staging (branch main, Staging_DB) -> Production (branch production, Production_DB).
