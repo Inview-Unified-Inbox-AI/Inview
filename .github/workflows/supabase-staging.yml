@@ -40,7 +40,7 @@ jobs:
         run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
 
       - name: Show what is about to be applied
-        run: supabase db push --dry-run
+        run: supabase db push --remote --dry-run
 
       - name: Apply migrations
-        run: supabase db push
+        run: supabase db push --remote
