@@ -1,7 +1,8 @@
 import Image, { type ImageProps } from "next/image";
 import { Button } from "@repo/ui/button";
 import styles from "./page.module.css";
-
+import { FamilyReceiveComponent } from "@repo/ui/components/family-receive-button";
+import { MeetingCard } from "@repo/ui/components/meeting-card";
 type Props = Omit<ImageProps, "src"> & {
   srcLight: string;
   srcDark: string;
@@ -38,6 +39,18 @@ export default function Home() {
           </li>
           <li>Save and see your changes instantly.</li>
         </ol>
+        <div className="flex flex-col">
+          <MeetingCard
+            title={""}
+            date={""}
+            time={""}
+            duration={""}
+            meetingLink={""}
+            notification={""}
+            participants={[]}
+            description={""}
+          />
+        </div>
 
         <div className={styles.ctas}>
           <a
