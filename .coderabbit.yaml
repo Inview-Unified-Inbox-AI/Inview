@@ -1,6 +1,16 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 # CodeRabbit is a helper reviewer. The owner's approval and the CI checks are still required.
+#
+# How to keep its advice relevant to THIS project:
+#   1. The "**" instruction below tells it what we are and what we deliberately do not want.
+#   2. knowledge_base reads CONTRIBUTING.md and AGENTS.md as our rulebook.
+#   3. Per-folder instructions follow the project structure.
+#   4. When a comment is wrong for us, reply to it, e.g.
+#        "@coderabbitai we use X here because Y, remember this"
+#      It saves that as a learning and applies it to later PRs (scope: local = this repo only).
+#   When you add a new rule above, also update the matching path instruction here.
 language: en-US
+tone_instructions: "Short, practical, friendly. Explain simply. Prefer fewer, high-value comments over many nitpicks."
 reviews:
   profile: chill
   request_changes_workflow: false
@@ -12,7 +22,37 @@ reviews:
     base_branches:
       - main
       - production
+  path_filters:
+    - "!**/package-lock.json"
+    - "!**/.next/**"
+    - "!**/node_modules/**"
+    - "!**/*.svg"
   path_instructions:
+    - path: "**"
+      instructions: |
+        PROJECT CONTEXT (read before commenting):
+        - Inview is a Turborepo monorepo (npm workspaces, Node 24) with 3 Next.js apps in apps/ (product, landing-page, docs)
+          and shared packages in packages/ (ui, eslint-config, typescript-config). Backend is Supabase.
+        - A small team of 5 (a university project). Prefer the simplest solution that works.
+        - Environments: Local (Docker + Supabase) -> Staging (branch main, Staging_DB) -> Production (branch production, Production_DB).
+        - The rules in CONTRIBUTING.md and AGENTS.md are the source of truth. If a general best practice conflicts with them, follow them.
+        HOW TO REVIEW:
+        - Only comment on the lines changed in this PR. Do not ask for refactors of unrelated code.
+        - Do NOT suggest switching tools (npm to pnpm/yarn, Next.js to another framework, adding Prisma/ORMs, other CI systems).
+        - Do NOT suggest big additions (new services, heavy libraries, microservices, extra environments) unless the PR clearly needs it.
+        - Do NOT ask for tests, docs or error handling on throwaway scaffold code from the starter template.
+        - Skip pure style nitpicks. ESLint (--max-warnings 0), TypeScript and Prettier already enforce style.
+        - Focus on: real bugs, security, data loss, and anything that breaks the Local/Staging/Production workflow.
+        - If a suggestion is only "nice to have", say so clearly or leave it out.
+    - path: "apps/**"
+      instructions: |
+        Next.js (App Router, React 19, TypeScript). Prefer Server Components; add "use client" only when needed.
+        Only NEXT_PUBLIC_ variables may reach the browser. Flag any secret or service_role key in client code or in a NEXT_PUBLIC_ variable.
+        Reuse components from @repo/ui instead of duplicating them. Do not import one app from another app.
+    - path: "packages/**"
+      instructions: |
+        Shared code used by several apps. Flag breaking changes to exported APIs and any app-specific logic placed here.
+        Config packages (eslint-config, typescript-config) should change rarely; explain why when they do.
     - path: "supabase/migrations/**"
       instructions: |
         Review every SQL migration like it will run on a live production database.
@@ -25,7 +65,28 @@ reviews:
         - File names must come from `supabase migration new` (timestamp_name.sql).
     - path: "supabase/seed.sql"
       instructions: "Local fake data only. Flag any real-looking emails, passwords, tokens or customer data."
+    - path: "supabase/config.toml"
+      instructions: "Local-only settings. Flag anything that looks like a real secret or a real project URL."
     - path: ".github/workflows/**"
-      instructions: "Flag any step that prints secrets, uses pull_request_target, or applies migrations to production without the `production` environment approval."
-    - path: "**/*.{ts,tsx}"
-      instructions: "Flag hard-coded secrets or keys and any use of the Supabase service_role key in browser code."
+      instructions: |
+        Workflows are security-sensitive.
+        - Flag any step that prints secrets, or applies migrations to production without the `production` environment approval.
+        - supabase-production.yml uses `pull_request_target` ON PURPOSE (so a PR cannot change the workflow that holds production credentials).
+          Do not suggest changing it to `pull_request`. Do flag any step in it that runs code from the PR (for example npm install, scripts, or actions from the PR checkout).
+        - ci.yml pins npm to 11.19.0 on purpose because package.json devEngines requires that exact version. Do not suggest `cache: npm` in setup-node or removing the pin.
+        - Action versions should be pinned to a major version tag at least.
+    - path: ".github/actions/**"
+      instructions: "Must only copy migration .sql files as plain data. Flag anything that executes content from the pull request."
+    - path: "CONTRIBUTING.md"
+      instructions: "Written for complete beginners. Keep language simple. Flag instructions that no longer match the workflows or package.json scripts."
+    - path: "turbo.json"
+      instructions: "Turborepo here may differ from older versions. Follow AGENTS.md and the docs bundled in the installed turbo package, not memory."
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "CONTRIBUTING.md"
+      - "AGENTS.md"
+      - "README.md"
+  learnings:
+    scope: local
