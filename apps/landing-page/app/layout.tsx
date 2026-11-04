@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
-const inter = Inter({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-jakarta",
 });
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${geistMono.variable}`}>
+    <html lang="en" className={`${jakarta.variable} ${geistMono.variable}`}>
       <body>{children}</body>
     </html>
   );
