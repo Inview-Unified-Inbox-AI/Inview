@@ -3,7 +3,7 @@ name: Supabase - migrate Production
 # SECURITY: the PR trigger is pull_request_target on purpose. GitHub then always runs THIS file
 # as it exists on the production branch, so a pull request cannot edit the workflow to steal the
 # production credentials. The PR's migration .sql files are copied in as plain data and are never run
-# as code (see .github/actions/pr-migrations). Also restrict the "production" and "production-preview"
+# as code (see .github/actions/pr-migrations). Also restrict the "production" and "production"
 # environments to the production branch only (Settings -> Environments -> Deployment branches).
 # NOTE: this workflow must already exist on the production branch before it can run for a PR.
 #
@@ -35,9 +35,9 @@ jobs:
     if: github.event_name == 'pull_request_target'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # "production-preview" holds the same secrets as "production" but has no approval step.
+    # "production" holds the same secrets as "production" but has no approval step.
     # It is safe only because this workflow always comes from the production branch.
-    environment: production-preview
+    environment: production
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
@@ -100,7 +100,7 @@ jobs:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    environment: production-preview
+    environment: production
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
