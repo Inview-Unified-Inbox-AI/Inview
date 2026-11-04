@@ -73,7 +73,7 @@ reviews:
         - Flag any step that prints secrets, or applies migrations to production without the `production` environment approval.
         - supabase-production.yml uses `pull_request_target` ON PURPOSE (so a PR cannot change the workflow that holds production credentials).
           Do not suggest changing it to `pull_request`. Do flag any step in it that runs code from the PR (for example npm install, scripts, or actions from the PR checkout).
-        - ci.yml pins npm to 11.19.0 on purpose because package.json devEngines requires that exact version. Do not suggest `cache: npm` in setup-node or removing the pin.
+        - package.json devEngines allows npm ^11.19.0 (a range on purpose, so Vercel and CI do not break when npm patch versions change). Do not suggest pinning an exact npm version.
         - Action versions should be pinned to a major version tag at least.
     - path: ".github/actions/**"
       instructions: "Must only copy migration .sql files as plain data. Flag anything that executes content from the pull request."
