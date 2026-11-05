@@ -1,3 +1,5 @@
+"use client"
+
 import { NavigationMenu as NavigationMenuPrimitive } from "@animate-ui/react/primitives/base-ui/navigation-menu"
 import { cva } from "class-variance-authority"
 import { cn } from "cn"

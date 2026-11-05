@@ -4,7 +4,8 @@ import localFont from "next/font/local";
 import { ThemeProvider } from "@repo/ui/components/theme-provider";
 import { ThemeToggle } from "@repo/ui/components/theme-toggle";
 import "./globals.css";
-
+import { SidebarProvider, SidebarTrigger } from "@repo/ui/components/sidebar";
+import AppSidebar from "@repo/ui/components/app-sidebar";
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-jakarta",
@@ -32,8 +33,14 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-          <ThemeToggle className="fixed top-4 right-4 z-50" />
-          {children}
+          <SidebarProvider>
+            <AppSidebar />
+            <main>
+              <SidebarTrigger />
+              <ThemeToggle className="fixed top-4 right-4 z-50" />
+              {children}
+            </main>
+          </SidebarProvider>
         </ThemeProvider>
       </body>
     </html>
