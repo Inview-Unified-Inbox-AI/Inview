@@ -3,6 +3,8 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import localFont from "next/font/local";
 import { ThemeProvider } from "@repo/ui/components/theme-provider";
 import { ThemeToggle } from "@repo/ui/components/theme-toggle";
+import SmoothScroll from "@/components/SmoothScroll";
+import "lenis/dist/lenis.css";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -33,7 +35,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <ThemeToggle className="fixed top-4 right-4 z-50" />
-          {children}
+          <SmoothScroll>{children}</SmoothScroll>
         </ThemeProvider>
       </body>
     </html>

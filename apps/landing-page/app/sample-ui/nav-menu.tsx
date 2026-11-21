@@ -47,7 +47,7 @@ const components: { title: string; href: string; description: string }[] = [
 ];
 export default function NavigationMenuDemo() {
   return (
-    <NavigationMenu>
+    <NavigationMenu className={"px-5 py-4"}>
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>

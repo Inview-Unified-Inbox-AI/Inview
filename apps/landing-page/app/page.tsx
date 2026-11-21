@@ -3,6 +3,7 @@ import { Button } from "@repo/ui/button";
 import styles from "./page.module.css";
 import { FamilyReceiveComponent } from "@repo/ui/components/family-receive-button";
 import NavigationMenuDemo from "./sample-ui/nav-menu";
+import HeroSection from "@/components/HeroSection";
 
 type Props = Omit<ImageProps, "src"> & {
   srcLight: string;
@@ -23,7 +24,12 @@ const ThemeImage = (props: Props) => {
 export default function Home() {
   return (
     <div>
-      <NavigationMenuDemo />
+      <header className="sticky top-0 z-40 bg-background/70 backdrop-blur-md">
+        <NavigationMenuDemo />
+      </header>
+      <HeroSection />
+
+      <div className="h-screen" />
     </div>
   );
 }
