@@ -1,6 +1,6 @@
 import { cn } from "@repo/ui/lib/utils";
 import Image from "next/image";
-import BG from "@/public/landing-page-mockup/bg-2.jpg";
+import BG from "@/public/landing-page-mockup/bg-5.jpg";
 export function BentoCard({
   title,
   children,
@@ -8,6 +8,7 @@ export function BentoCard({
   className,
   bgClass,
   imgClass,
+  visualClass,
   framed,
 }: {
   title: string;
@@ -16,17 +17,19 @@ export function BentoCard({
   className?: string;
   bgClass?: string;
   imgClass?: string;
+  /** Classes for the visual wrapper, e.g. a fixed height so content overflows. */
+  visualClass?: string;
   /** Centered gradient hairline frame around the visual, flush with the bottom. */
   framed?: boolean;
 }) {
   return (
     <article
       className={cn(
-        "flex flex-col overflow-hidden rounded-xl shadow-lg border border-muted-foreground/5 bg-card",
+        "row-span-2 grid gap-y-0 [grid-template-rows:subgrid] overflow-hidden rounded-lg shadow-xl shadow-muted-foreground/5 border border-muted-foreground/5 bg-card",
         className,
       )}
     >
-      <div className={cn("p-6 pb-0 md:p-8 md:pb-0", framed && "pb-6 md:pb-6")}>
+      <div className="p-6 pb-0 md:p-8 md:pb-0">
         <h3 className="text-lg font-semibold">{title}</h3>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground md:text-base">
           {children}
@@ -35,8 +38,9 @@ export function BentoCard({
       {visual && (
         <div
           className={cn(
-            "relative shadow-xl  isolate mt-6 flex flex-1 flex-col overflow-hidden",
-            framed && "mx-6 mt-auto flex-none rounded-t-md px-1 pt-1 md:mx-8",
+            "relative isolate mt-6 flex flex-col overflow-hidden shadow-xl",
+            framed && "mx-6 rounded-t-md px-1 pt-1 md:mx-8",
+            visualClass,
           )}
         >
           <Image
@@ -44,12 +48,12 @@ export function BentoCard({
             alt=""
             fill
             sizes="(min-width: 768px) 60vw, 100vw"
-            className={cn("-z-10 object-cover shadow-xl ", bgClass)}
+            className={cn("-z-10 object-cover shadow-2xl ", bgClass)}
           />
           <div
             className={cn(
-              "relative shadow-xl",
-              !framed && "px-5 pt-6 md:px-8 md:pt-8",
+              "relative shadow-2xl",
+              framed ? "min-h-0 flex-1" : "px-5 pt-6 md:px-8 md:pt-8",
               imgClass,
             )}
           >
