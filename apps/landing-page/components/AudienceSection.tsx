@@ -33,7 +33,7 @@ const AudienceSection = () => (
         {ROWS.map((row) => (
           <li
             key={row.lead}
-            className="flex gap-4 rounded-2xl border border-border bg-card p-5"
+            className="flex gap-4 rounded-xl shadow-lg border border-muted-foreground/10 bg-card p-5"
           >
             <span
               aria-hidden
