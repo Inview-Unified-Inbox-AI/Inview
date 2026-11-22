@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "landing-page",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--workspace=landing-page"],
+      "port": 3002
+    }
+  ]
+}

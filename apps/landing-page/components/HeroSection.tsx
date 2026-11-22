@@ -68,7 +68,7 @@ const HeroSection = () => {
         {/* Subtle checkerboard texture */}
         <div
           aria-hidden
-          className="pointer-events-none absolute -inset-1/2 -z-10 -rotate-45 opacity-[0.03]"
+          className="pointer-events-none absolute -inset-1/2 -z-10 -rotate-45 opacity-[0.04]"
           style={{
             backgroundImage:
               "linear-gradient(45deg, white 25%, transparent 25%, transparent 75%, white 75%), linear-gradient(45deg, white 25%, transparent 25%, transparent 75%, white 75%)",
@@ -81,7 +81,10 @@ const HeroSection = () => {
           aria-hidden
           className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-80 w-3xl -translate-x-1/2 rounded-full bg-white/20 blur-3xl"
         />
-
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-80 w-3xl -translate-x-1/2 rounded-full bg-white/20 blur-3xl"
+        />
         <div
           aria-hidden
           className="pointer-events-none absolute -top-40 left-1 -z-10 h-80 w-3xl -translate-x-1/2 rounded-full bg-white/20 blur-3xl"
@@ -92,11 +95,11 @@ const HeroSection = () => {
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute bottom-0  -z-10 h-80 w-3xl -translate-x-1/2 rounded-full bg-white/20 blur-3xl"
+          className="pointer-events-none absolute bottom-0  -z-10 h-80 w-5xl -translate-x-1/2 rounded-full bg-white/20 blur-3xl"
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute bottom-0 right-0 -z-10 h-80 w-3xl -translate-x-1/2 rounded-full bg-white/20 blur-3xl"
+          className="pointer-events-none absolute bottom-0 right-10 -z-10 h-80 w-3xl -translate-x-1/2 rounded-full bg-white/20 blur-3xl"
         />
         <div className="mx-auto flex max-w-6xl flex-col items-center text-center">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-black/15 px-4 py-1.5 text-sm font-medium text-white backdrop-blur">
@@ -116,16 +119,16 @@ const HeroSection = () => {
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <a
-              href="#get-started"
+              href="#waitlist"
               className={cn(
                 buttonVariants({ variant: "secondary_white" }),
                 "px-7 font-semibold text-primary",
               )}
             >
-              Get Started
+              Join the waitlist
             </a>
             <a
-              href="#demo"
+              href="#how-it-works"
               className={cn(
                 buttonVariants({ variant: "outline" }),
                 "border-dashed border-white/70 bg-transparent px-7 font-semibold text-white hover:bg-white/15 hover:text-white focus-visible:border-white focus-visible:ring-white/60 dark:bg-transparent dark:hover:bg-white/15",
@@ -134,7 +137,7 @@ const HeroSection = () => {
               <span className="grid size-5 place-items-center rounded-full bg-white text-primary">
                 <PlayIcon className="size-2.5" />
               </span>
-              Watch Demo
+              See how it works
             </a>
           </div>
         </div>
