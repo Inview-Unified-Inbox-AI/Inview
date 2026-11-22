@@ -28,9 +28,10 @@ const FeaturesSection = () => (
           className="md:col-span-5"
           title="See the next action in each chat"
           visual={<InboxPreview />}
-          bgClass="mx-7 mt-0 rounded-lg"
-          imgClass="pr-0 md:pr-0 -mt-7  -mr-2 "
+          bgClass=""
+          imgClass=""
           visualClass="h-72"
+          framedRight
         >
           Pick up a conversation with the product, size, delivery preference and
           outstanding question in view. Open the original message whenever you
@@ -39,7 +40,7 @@ const FeaturesSection = () => (
 
         <BentoCard
           className="md:col-span-4"
-          title="Hand off a follow-up with the details attached"
+          title="See overdue follow-ups"
           visual={<HandoffPreview />}
           visualClass="h-72"
           framed
@@ -52,8 +53,7 @@ const FeaturesSection = () => (
         <BentoCard
           title="Ownership and handoff"
           visual={<OwnershipPreview />}
-          bgClass="pr-0 md:pr-0  -ml-7 rounded-sm"
-          imgClass="-mb-10 -mt-7 pl-0 md:pl-0"
+          framedLeft
         >
           Assign an action, set a due time and leave a note. The next person on
           shift knows exactly what was promised.
@@ -72,8 +72,7 @@ const FeaturesSection = () => (
         <BentoCard
           title="Conversation summary"
           visual={<SummaryPreview />}
-          bgClass="ml-7 rounded-sm"
-          imgClass="-mb-10 -mt-7 pr-0 md:pr-0 "
+          framedRight
         >
           Product, variant, quantity and delivery in one glance. Uncertain
           details are flagged for review.

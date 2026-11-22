@@ -10,6 +10,8 @@ export function BentoCard({
   imgClass,
   visualClass,
   framed,
+  framedLeft,
+  framedRight,
 }: {
   title: string;
   children: React.ReactNode;
@@ -21,7 +23,12 @@ export function BentoCard({
   visualClass?: string;
   /** Centered gradient hairline frame around the visual, flush with the bottom. */
   framed?: boolean;
+  /** Same frame, but the gradient bleeds off the card's left edge. */
+  framedLeft?: boolean;
+  /** Same frame, but the gradient bleeds off the card's right edge. */
+  framedRight?: boolean;
 }) {
+  const isFramed = framed || framedLeft || framedRight;
   return (
     <article
       className={cn(
@@ -40,6 +47,8 @@ export function BentoCard({
           className={cn(
             "relative isolate mt-6 flex flex-col overflow-hidden shadow-xl",
             framed && "mx-6 rounded-t-md px-1 pt-1 md:mx-8",
+            framedLeft && "mr-6 rounded-tr-md pr-1 pt-1 md:mr-8",
+            framedRight && "ml-6 rounded-tl-md pl-1 pt-1 md:ml-8",
             visualClass,
           )}
         >
@@ -53,7 +62,7 @@ export function BentoCard({
           <div
             className={cn(
               "relative shadow-2xl",
-              framed ? "min-h-0 flex-1" : "px-5 pt-6 md:px-8 md:pt-8",
+              isFramed ? "min-h-0 flex-1" : "px-5 pt-6 md:px-8 md:pt-8",
               imgClass,
             )}
           >

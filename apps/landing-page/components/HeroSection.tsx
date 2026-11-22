@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { buttonVariants } from "@repo/ui/components/button";
 import { cn } from "@repo/ui/lib/utils";
 import InboxUI from "@/public/landing-page-mockup/unified-inbox.svg";
@@ -6,6 +5,7 @@ import QueUI from "@/public/landing-page-mockup/que.svg";
 import ReplyUI from "@/public/landing-page-mockup/reply.svg";
 import Conversation from "@/public/landing-page-mockup/conversation.svg";
 import ReportUI from "@/public/landing-page-mockup/report.svg";
+import HeroMockups, { type Mockup } from "./HeroMockups";
 
 const PlayIcon = ({ className }: { className?: string }) => (
   <svg
@@ -32,34 +32,39 @@ const SparklesIcon = ({ className }: { className?: string }) => (
 /* Mockup screens arranged in a V: the centre inbox is largest and sits lowest,
    dipping past the bottom edge; each step outward is smaller and lifted higher.
    Widths and offsets are percentages of the strip width so the shape scales. */
-const MOCKUPS = [
+const MOCKUPS: readonly Mockup[] = [
   {
     src: ReportUI,
     alt: "Report screen summarising replies and response rate",
-    className: "hidden md:block md:w-[18%] md:mt-0 md:z-0",
+    className: "hidden md:block md:w-[18%] md:-mt-5 md:z-0",
+    sink: 180,
   },
   {
     src: QueUI,
     alt: "Queue of buying enquiries ranked by priority",
     className: "hidden md:block md:w-[20%] md:mt-[4%] md:z-10",
+    sink: 120,
   },
   {
     src: InboxUI,
     alt: "Unified inbox combining Instagram, Messenger and WhatsApp messages",
     className: "w-full md:w-[45%] md:mt-[7%] z-20",
     priority: true,
+    sink: 0,
   },
   {
     src: ReplyUI,
     alt: "AI-drafted reply ready for review before sending",
     className: "hidden md:block md:w-[20%] md:mt-[4%] md:z-10",
+    sink: 120,
   },
   {
     src: Conversation,
     alt: "Customer conversation with an AI reply suggestion",
-    className: "hidden md:block md:w-[18%] md:mt-0 md:z-0",
+    className: "hidden md:block md:w-[18%] md:-mt-5 md:z-0",
+    sink: 180,
   },
-] as const;
+];
 
 const HeroSection = () => {
   return (
@@ -142,20 +147,9 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Dashboard preview strip: V-shaped, centre card dips off the bottom */}
-        <div className="relative mx-auto  flex aspect-100/38 w-full  items-start justify-center overflow-hidden md:aspect-100/26 md:space-x-[-1%]">
-          {MOCKUPS.map(({ src, alt, className, ...rest }) => (
-            <div key={alt} className={cn("relative", className)}>
-              <Image
-                src={src}
-                alt={alt}
-                sizes="(min-width: 1280px) 512px, (min-width: 768px) 40vw, 100vw"
-                priority={"priority" in rest ? rest.priority : false}
-                className="h-auto w-full"
-              />
-            </div>
-          ))}
-        </div>
+        {/* Dashboard preview strip: V-shaped, centre card dips off the bottom;
+            the outer cards sink on scroll (GSAP ScrollTrigger). */}
+        <HeroMockups mockups={MOCKUPS} />
       </div>
     </section>
   );

@@ -826,7 +826,7 @@ function Tag({
 
 const LABELLED = [
   {
-    name: "Aisha",
+    name: "Afthah",
     preview: "Is the black dress available in M?",
     label: "Sales enquiry",
     tone: "blue",
