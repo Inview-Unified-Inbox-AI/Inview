@@ -98,6 +98,8 @@ const FeaturesSection = () => (
           title="Run your workflows with your voice"
           visual={<VoicePreview />}
           bgClass="object-top"
+          imgClass="px-5 pt-6 md:px-8 md:pt-8"
+          framed
         >
           Just say what needs doing, like assigning a stock check or setting a
           reminder, and Inview takes care of the steps.

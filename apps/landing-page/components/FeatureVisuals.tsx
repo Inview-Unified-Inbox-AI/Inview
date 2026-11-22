@@ -8,6 +8,16 @@ import Image from "next/image";
 
 const solid = "bg-white/90 backdrop-blur-lg";
 
+/* Loop length of each card's animation. Keyframes are percentages of this,
+   so changing a value slows or speeds up the whole card evenly. */
+const INBOX_DURATION = "6s";
+const HANDOFF_DURATION = "6s";
+const DRAFT_DURATION = "7s";
+const VOICE_DURATION = "8s";
+const OWNERSHIP_DURATION = "7s";
+const LABELS_DURATION = "7s";
+const SUMMARY_DURATION = "7s";
+
 /* 1 · Shared inbox with the next action per chat */
 const INBOX = [
   {
@@ -47,22 +57,54 @@ const INBOX = [
 export function InboxPreview() {
   return (
     <Card className={cn(solid, "p-0 overflow-hidden")} aria-hidden>
+      <style>{`
+        ${inboxKeyframes}
+        @media (prefers-reduced-motion: reduce) {
+          .inview-ianim { animation: none !important; opacity: 1 !important; transform: none !important; }
+          .inview-icount:not(:last-child) { display: none; }
+        }
+      `}</style>
       <div className="flex items-center justify-between border-b border-neutral-100 px-5 py-3.5">
         <p className="text-sm font-semibold">Unified inbox</p>
-        <span className="text-xs text-neutral-400">3 open</span>
+        <span className="relative grid text-xs text-neutral-400">
+          {INBOX.map((_, i) => (
+            <span
+              key={i}
+              style={{
+                gridArea: "1 / 1",
+                animation: `inview-icount-${i} ${INBOX_DURATION} ease-out infinite`,
+              }}
+              className="inview-ianim inview-icount text-right opacity-0"
+            >
+              {i + 1} open
+            </span>
+          ))}
+        </span>
       </div>
       <ul className="divide-y divide-neutral-100 relative">
-        {INBOX.map((row) => (
-          <li key={row.name} className="flex items-center gap-3 px-5 py-3.5">
-            <Avatar>{row.name[0]}</Avatar>
+        {INBOX.map((row, i) => (
+          <li
+            key={row.name}
+            style={{
+              animation: `inview-irow-${i} ${INBOX_DURATION} ease-out infinite`,
+            }}
+            className="inview-ianim flex items-center gap-3 px-5 py-3.5 opacity-0"
+          >
+            <span className="relative">
+              <Avatar>{row.name[0]}</Avatar>
+              <span
+                style={{
+                  animation: `inview-idot-${i} ${INBOX_DURATION} ease-out infinite`,
+                }}
+                className="inview-ianim absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-primary opacity-0 ring-2 ring-white"
+              />
+            </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-semibold">{row.name}</p>
-                {/* <ChannelBadge channel={row.channel} /> */}
-
                 <Image
                   src={row.channel}
-                  alt={row.action}
+                  alt=""
                   width={100}
                   height={100}
                   className="w-5"
@@ -71,7 +113,14 @@ export function InboxPreview() {
               <p className="truncate text-xs text-neutral-500">{row.preview}</p>
             </div>
             <div className="hidden shrink-0 flex-col items-end gap-1 sm:flex">
-              <Pill tone={row.tone}>{row.action}</Pill>
+              <span
+                style={{
+                  animation: `inview-ipill-${i} ${INBOX_DURATION} ease-out infinite`,
+                }}
+                className="inview-ianim opacity-0"
+              >
+                <Pill tone={row.tone}>{row.action}</Pill>
+              </span>
               <span className="text-[11px] text-neutral-400">{row.time}</span>
             </div>
           </li>
@@ -90,6 +139,7 @@ const HANDOFFS = [
     who: "NK",
     tone: "amber",
     label: "Waiting on us",
+    after: "✓ Done",
   },
   {
     title: "Delivery quote",
@@ -98,6 +148,7 @@ const HANDOFFS = [
     who: "SP",
     tone: "blue",
     label: "Assigned",
+    after: "✓ Accepted",
   },
   {
     title: "Size check",
@@ -106,21 +157,63 @@ const HANDOFFS = [
     who: "NK",
     tone: "amber",
     label: "Waiting on us",
+    after: null,
   },
 ] as const;
 
 export function HandoffPreview() {
   return (
     <div className="h-full space-y-1.5 overflow-hidden" aria-hidden>
-      {HANDOFFS.map((h) => (
-        <Card key={h.title} className={cn(solid, "rounded-md h-28 p-4")}>
+      <style>{`
+        ${handoffKeyframes}
+        @media (prefers-reduced-motion: reduce) {
+          .inview-hanim { animation: none !important; opacity: 1 !important; transform: none !important; }
+          .inview-hbefore { display: none; }
+        }
+      `}</style>
+      {HANDOFFS.map((h, i) => (
+        <Card
+          key={h.title}
+          style={{
+            animation: `inview-hcard-${i} ${HANDOFF_DURATION} ease-out infinite`,
+          }}
+          className={cn(solid, "inview-hanim h-28 rounded-md p-4 opacity-0")}
+        >
           <div className="flex items-center gap-3">
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold">{h.title}</p>
               <Meta>{h.detail}</Meta>
             </div>
-            <Pill tone={h.tone}>{h.label}</Pill>
-            <span className="grid size-7 shrink-0 place-items-center rounded-full bg-neutral-100 text-[10px] font-semibold text-neutral-600">
+            <div className="grid justify-items-end">
+              <span
+                style={{
+                  gridArea: "1 / 1",
+                  animation: h.after
+                    ? `inview-hbefore-${i} ${HANDOFF_DURATION} ease-out infinite`
+                    : undefined,
+                }}
+                className="inview-hanim inview-hbefore"
+              >
+                <Pill tone={h.tone}>{h.label}</Pill>
+              </span>
+              {h.after && (
+                <span
+                  style={{
+                    gridArea: "1 / 1",
+                    animation: `inview-hafter-${i} ${HANDOFF_DURATION} ease-out infinite`,
+                  }}
+                  className="inview-hanim opacity-0"
+                >
+                  <Pill tone="green">{h.after}</Pill>
+                </span>
+              )}
+            </div>
+            <span
+              style={{
+                animation: `inview-hring-${i} ${HANDOFF_DURATION} ease-out infinite`,
+              }}
+              className="inview-hanim grid size-7 shrink-0 place-items-center rounded-full bg-neutral-100 text-[10px] font-semibold text-neutral-600"
+            >
               {h.who}
             </span>
           </div>
@@ -133,28 +226,260 @@ export function HandoffPreview() {
   );
 }
 
-/* 3 · Editable draft */
+/* 3 · Editable draft: question arrives, AI drafts word by word, seller sends (7s loop) */
+const DRAFT_WORDS = "Hi Afthah! Checking black, M and COD for you now.".split(
+  " ",
+);
+
+const kf = (name: string, stops: [number, string][]) =>
+  `@keyframes ${name} { ${stops.map(([p, css]) => `${p}% { ${css} }`).join(" ")} }`;
+const SHOW = "opacity:1; transform:none;";
+const HIDE = "opacity:0; transform:translateY(6px);";
+
+const rowStart = (i: number) => 6 + i * 11;
+const inboxKeyframes = [
+  ...INBOX.flatMap((_, i) => {
+    const st = rowStart(i);
+    const last = i === INBOX.length - 1;
+    const nextSt = last ? 94 : rowStart(i + 1);
+    const endOp = last ? "opacity:1;" : "opacity:0;";
+    return [
+      kf(`inview-irow-${i}`, [
+        [0, HIDE],
+        [st, HIDE],
+        [st + 4, SHOW],
+        [94, SHOW],
+        [100, HIDE],
+      ]),
+      kf(`inview-ipill-${i}`, [
+        [0, "opacity:0;transform:scale(.6);"],
+        [st + 4, "opacity:0;transform:scale(.6);"],
+        [st + 8, "opacity:1;transform:scale(1);"],
+        [94, "opacity:1;transform:scale(1);"],
+        [100, "opacity:0;"],
+      ]),
+      kf(`inview-idot-${i}`, [
+        [0, "opacity:0;"],
+        [st + 3, "opacity:0;"],
+        [st + 5, "opacity:1;"],
+        [94, "opacity:1;"],
+        [100, "opacity:0;"],
+      ]),
+      kf(`inview-icount-${i}`, [
+        [0, "opacity:0;"],
+        [st + 3, "opacity:0;"],
+        [st + 5, "opacity:1;"],
+        [nextSt + 3, "opacity:1;"],
+        [nextSt + 5, endOp],
+        [94, endOp],
+        [100, "opacity:0;"],
+      ]),
+    ];
+  }),
+].join(" ");
+
+const handoffKeyframes = [
+  ...HANDOFFS.flatMap((_, i) => {
+    const st = 4 + i * 12;
+    const done = 56 + i * 14;
+    return [
+      kf(`inview-hcard-${i}`, [
+        [0, HIDE],
+        [st, HIDE],
+        [st + 5, SHOW],
+        [94, SHOW],
+        [100, HIDE],
+      ]),
+      kf(`inview-hbefore-${i}`, [
+        [0, "opacity:1;"],
+        [done, "opacity:1;"],
+        [done + 3, "opacity:0;"],
+        [99, "opacity:0;"],
+        [100, "opacity:1;"],
+      ]),
+      kf(`inview-hafter-${i}`, [
+        [0, "opacity:0;transform:scale(.7);"],
+        [done + 2, "opacity:0;transform:scale(.7);"],
+        [done + 6, "opacity:1;transform:scale(1);"],
+        [94, "opacity:1;transform:scale(1);"],
+        [100, "opacity:0;"],
+      ]),
+      kf(`inview-hring-${i}`, [
+        [0, "box-shadow:0 0 0 0 rgba(96,165,250,0);"],
+        [done, "box-shadow:0 0 0 0 rgba(96,165,250,.55);"],
+        [done + 8, "box-shadow:0 0 0 9px rgba(96,165,250,0);"],
+        [100, "box-shadow:0 0 0 0 rgba(96,165,250,0);"],
+      ]),
+    ];
+  }),
+].join(" ");
+
+const draftKeyframes = [
+  kf("inview-q", [
+    [0, HIDE],
+    [4, HIDE],
+    [8, SHOW],
+    [94, SHOW],
+    [100, HIDE],
+  ]),
+  kf("inview-typing", [
+    [0, HIDE],
+    [12, HIDE],
+    [15, SHOW],
+    [26, SHOW],
+    [28, HIDE],
+    [100, HIDE],
+  ]),
+  kf("inview-reply", [
+    [0, "opacity:0;"],
+    [27, "opacity:0;"],
+    [29, "opacity:1;"],
+    [94, "opacity:1;"],
+    [100, "opacity:0;"],
+  ]),
+  kf("inview-sentbg", [
+    [0, "opacity:0;"],
+    [61, "opacity:0;"],
+    [66, "opacity:1;"],
+    [94, "opacity:1;"],
+    [100, "opacity:0;"],
+  ]),
+  kf("inview-sentfg", [
+    [0, "color:#404040;"],
+    [61, "color:#404040;"],
+    [66, "color:#fff;"],
+    [94, "color:#fff;"],
+    [100, "color:#404040;"],
+  ]),
+  kf("inview-status", [
+    [0, HIDE],
+    [68, HIDE],
+    [72, SHOW],
+    [94, SHOW],
+    [100, HIDE],
+  ]),
+  kf("inview-press", [
+    [0, "transform:scale(1);"],
+    [56, "transform:scale(1);"],
+    [59, "transform:scale(.92);"],
+    [63, "transform:scale(1);"],
+    [100, "transform:scale(1);"],
+  ]),
+  kf("inview-dot", [
+    [0, "transform:translateY(0);"],
+    [50, "transform:translateY(-3px);"],
+    [100, "transform:translateY(0);"],
+  ]),
+  ...DRAFT_WORDS.map((_, i) => {
+    const t = 28 + (i * 24) / DRAFT_WORDS.length;
+    return kf(`inview-w${i}`, [
+      [0, "opacity:0;"],
+      [t, "opacity:0;"],
+      [t + 1.5, "opacity:1;"],
+      [94, "opacity:1;"],
+      [100, "opacity:0;"],
+    ]);
+  }),
+].join(" ");
+
 export function DraftPreview() {
   return (
     <Card
       className={cn(
         solid,
-        "space-y-3 rounded-b-none h-full shadow-none ring-0",
+        "flex h-full flex-col gap-3 rounded-b-none shadow-none ring-0",
       )}
       aria-hidden
     >
+      <style>{`
+        ${draftKeyframes}
+        @media (prefers-reduced-motion: reduce) {
+          .inview-anim { animation: none !important; opacity: 1 !important; transform: none !important; }
+          .inview-typing { display: none; }
+        }
+      `}</style>
+
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold">Reply draft</p>
         <Pill tone="blue">AI assist</Pill>
       </div>
-      <p className="w-fit max-w-[85%] rounded-xl rounded-tl-sm bg-neutral-100 px-3.5 py-2.5 text-sm text-neutral-700">
+
+      <p
+        style={{ animation: `inview-q ${DRAFT_DURATION} ease-out infinite` }}
+        className="inview-anim w-fit max-w-[85%] rounded-xl rounded-tl-sm bg-neutral-100 px-3.5 py-2.5 text-sm text-neutral-700 opacity-0"
+      >
         Is the black M available?
       </p>
-      <p className="ml-auto max-w-[90%] rounded-xl rounded-tr-sm bg-primary/10 px-3.5 py-2.5 text-sm leading-relaxed text-neutral-700">
-        Hi Afthah! Checking black, M and COD for you now.
-      </p>
-      <div className="flex items-center gap-2 pt-1 mt-10">
-        <span className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white shadow-sm">
+
+      <div className="relative min-h-[6.75rem]">
+        <div
+          style={{
+            animation: `inview-typing ${DRAFT_DURATION} ease-out infinite`,
+          }}
+          className="inview-anim inview-typing absolute right-0 top-0 flex items-center gap-1 rounded-xl rounded-tr-sm bg-primary/10 px-3.5 py-3.5 opacity-0"
+        >
+          {[0, 1, 2].map((d) => (
+            <span
+              key={d}
+              style={{
+                animation: `inview-dot .9s ease-in-out ${d * 0.15}s infinite`,
+              }}
+              className="inview-anim size-1.5 rounded-full bg-primary"
+            />
+          ))}
+        </div>
+
+        <div
+          style={{
+            animation: `inview-reply ${DRAFT_DURATION} ease-out infinite`,
+          }}
+          className="inview-anim ml-auto w-fit max-w-[90%] opacity-0"
+        >
+          <div className="relative rounded-xl rounded-tr-sm bg-primary/10">
+            <span
+              style={{
+                animation: `inview-sentbg ${DRAFT_DURATION} ease-out infinite`,
+              }}
+              className="inview-anim absolute inset-0 rounded-xl rounded-tr-sm bg-primary opacity-0"
+            />
+            <p
+              style={{
+                animation: `inview-sentfg ${DRAFT_DURATION} linear infinite`,
+              }}
+              className="inview-anim relative px-3.5 py-2.5 text-sm leading-relaxed text-neutral-700"
+            >
+              {DRAFT_WORDS.map((w, i) => (
+                <span
+                  key={i}
+                  style={{
+                    animation: `inview-w${i} ${DRAFT_DURATION} ease-out infinite`,
+                  }}
+                  className="inview-anim opacity-0"
+                >
+                  {w}
+                  {i < DRAFT_WORDS.length - 1 ? " " : ""}
+                </span>
+              ))}
+            </p>
+          </div>
+          <p
+            style={{
+              animation: `inview-status ${DRAFT_DURATION} ease-out infinite`,
+            }}
+            className="inview-anim mt-1 text-right text-[11px] font-medium text-emerald-600 opacity-0"
+          >
+            ✓✓ Sent · just now
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-auto flex items-center gap-2 pb-2">
+        <span
+          style={{
+            animation: `inview-press ${DRAFT_DURATION} ease-in-out infinite`,
+          }}
+          className="inview-anim rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white shadow-sm"
+        >
           Send
         </span>
         <span className="rounded-full bg-white px-4 py-2 text-xs font-medium text-neutral-700 ring-1 ring-neutral-200">
@@ -257,18 +582,24 @@ export function VoicePreview() {
           {AUTOMATION.map((label, i) => (
             <li
               key={label}
-              style={{ animation: `inview-row-${i} 8s ease-out infinite` }}
+              style={{
+                animation: `inview-row-${i} ${VOICE_DURATION} ease-out infinite`,
+              }}
               className="inview-row flex items-center gap-2.5 opacity-0"
             >
               <span className="relative size-5 shrink-0">
                 <span
-                  style={{ animation: `inview-spin-${i} 8s linear infinite` }}
+                  style={{
+                    animation: `inview-spin-${i} ${VOICE_DURATION} linear infinite`,
+                  }}
                   className="inview-spin-wrap absolute inset-0 opacity-0"
                 >
                   <span className="inview-spinner absolute inset-0 rounded-full border-2 border-primary/25 border-t-primary [animation:inview-spin_.8s_linear_infinite]" />
                 </span>
                 <span
-                  style={{ animation: `inview-tick-${i} 8s ease-out infinite` }}
+                  style={{
+                    animation: `inview-tick-${i} ${VOICE_DURATION} ease-out infinite`,
+                  }}
                   className="inview-tick absolute inset-0 grid place-items-center rounded-full bg-emerald-500 text-[11px] font-bold text-white opacity-0"
                 >
                   ✓
@@ -291,49 +622,174 @@ const frameCard = cn(
   "rounded-b-none rounded-t-[3px] shadow-none ring-0",
 );
 
+const ownKeyframes = [
+  kf("inview-otitle", [
+    [0, HIDE],
+    [2, HIDE],
+    [6, SHOW],
+    [94, SHOW],
+    [100, HIDE],
+  ]),
+  kf("inview-odue", [
+    [0, "opacity:0;transform:scale(.7);"],
+    [7, "opacity:0;transform:scale(.7);"],
+    [11, "opacity:1;transform:scale(1);"],
+    [94, "opacity:1;transform:scale(1);"],
+    [100, "opacity:0;"],
+  ]),
+  kf("inview-osara", [
+    [0, HIDE],
+    [11, HIDE],
+    [15, SHOW],
+    [40, SHOW],
+    [46, "opacity:.5;transform:none;"],
+    [94, "opacity:.5;transform:none;"],
+    [100, HIDE],
+  ]),
+  kf("inview-onote", [
+    [0, HIDE],
+    [20, HIDE],
+    [25, SHOW],
+    [94, SHOW],
+    [100, HIDE],
+  ]),
+  kf("inview-oline", [
+    [0, "transform:scaleY(0);opacity:0;"],
+    [38, "transform:scaleY(0);opacity:1;"],
+    [46, "transform:scaleY(1);opacity:1;"],
+    [94, "transform:scaleY(1);opacity:1;"],
+    [100, "opacity:0;"],
+  ]),
+  kf("inview-ohanded", [
+    [0, "opacity:0;"],
+    [44, "opacity:0;"],
+    [48, "opacity:1;"],
+    [94, "opacity:1;"],
+    [100, "opacity:0;"],
+  ]),
+  kf("inview-okamal", [
+    [0, HIDE],
+    [46, HIDE],
+    [52, SHOW],
+    [94, SHOW],
+    [100, HIDE],
+  ]),
+  kf("inview-oring", [
+    [0, "box-shadow:0 0 0 0 rgba(100,116,139,0);"],
+    [52, "box-shadow:0 0 0 0 rgba(100,116,139,.45);"],
+    [62, "box-shadow:0 0 0 9px rgba(100,116,139,0);"],
+    [100, "box-shadow:0 0 0 0 rgba(100,116,139,0);"],
+  ]),
+  kf("inview-oflash", [
+    [0, "background-color:rgba(96,165,250,.08);"],
+    [54, "background-color:rgba(96,165,250,.08);"],
+    [58, "background-color:rgba(96,165,250,.28);"],
+    [64, "background-color:rgba(96,165,250,.08);"],
+    [100, "background-color:rgba(96,165,250,.08);"],
+  ]),
+  kf("inview-oseen", [
+    [0, "opacity:0;"],
+    [62, "opacity:0;"],
+    [66, "opacity:1;"],
+    [94, "opacity:1;"],
+    [100, "opacity:0;"],
+  ]),
+].join(" ");
+
 export function OwnershipPreview() {
-  const people = [
-    {
-      initial: "S",
-      name: "Sara",
-      meta: "Assigned · Morning shift",
-      bg: "bg-primary",
-    },
-    {
-      initial: "K",
-      name: "Kamal",
-      meta: "Reassigned · Evening shift",
-      bg: "bg-slate-500",
-    },
-  ];
   return (
     <Card className={cn(frameCard, "h-[17rem] overflow-hidden")} aria-hidden>
+      <style>{`
+        ${ownKeyframes}
+        @media (prefers-reduced-motion: reduce) {
+          .inview-oanim { animation: none !important; opacity: 1 !important; transform: none !important; }
+        }
+      `}</style>
+
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-semibold">Stock check · Black, M</p>
-        <Pill tone="amber">Due 4:30 pm</Pill>
+        <p
+          style={{
+            animation: `inview-otitle ${OWNERSHIP_DURATION} ease-out infinite`,
+          }}
+          className="inview-oanim text-sm font-semibold opacity-0"
+        >
+          Stock check · Black, M
+        </p>
+        <span
+          style={{
+            animation: `inview-odue ${OWNERSHIP_DURATION} ease-out infinite`,
+          }}
+          className="inview-oanim opacity-0"
+        >
+          <Pill tone="amber">Due 4:30 pm</Pill>
+        </span>
       </div>
+
       <ol className="mt-4">
-        {people.map((p, i) => (
-          <li key={p.name} className="relative flex items-center gap-3 pb-4">
-            {i === 0 && (
-              <span className="absolute left-[17px] top-9 h-[calc(100%-1.25rem)] w-px bg-primary/30" />
-            )}
-            <span
-              className={cn(
-                "relative grid size-9 shrink-0 place-items-center rounded-full text-sm font-semibold text-white",
-                p.bg,
-              )}
-            >
-              {p.initial}
-            </span>
-            <div>
-              <p className="text-sm font-semibold">{p.name}</p>
-              <Meta>{p.meta}</Meta>
-            </div>
-          </li>
-        ))}
+        <li
+          style={{
+            animation: `inview-osara ${OWNERSHIP_DURATION} ease-out infinite`,
+          }}
+          className="inview-oanim relative flex items-center gap-3 pb-4 opacity-0"
+        >
+          <span
+            style={{
+              animation: `inview-oline ${OWNERSHIP_DURATION} ease-in-out infinite`,
+            }}
+            className="inview-oanim absolute left-[17px] top-9 h-[calc(100%-1.25rem)] w-px origin-top bg-primary/40 opacity-0"
+          />
+          <span className="relative grid size-9 shrink-0 place-items-center rounded-full bg-primary text-sm font-semibold text-white">
+            S
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold">Sara</p>
+            <Meta>Assigned · Morning shift</Meta>
+          </div>
+          <span
+            style={{
+              animation: `inview-ohanded ${OWNERSHIP_DURATION} ease-out infinite`,
+            }}
+            className="inview-oanim rounded-full bg-neutral-100 px-2.5 py-1 text-[11px] font-medium text-neutral-500 opacity-0"
+          >
+            Handed off
+          </span>
+        </li>
+
+        <li
+          style={{
+            animation: `inview-okamal ${OWNERSHIP_DURATION} ease-out infinite`,
+          }}
+          className="inview-oanim relative flex items-center gap-3 pb-4 opacity-0"
+        >
+          <span
+            style={{
+              animation: `inview-oring ${OWNERSHIP_DURATION} ease-out infinite`,
+            }}
+            className="inview-oanim relative grid size-9 shrink-0 place-items-center rounded-full bg-slate-500 text-sm font-semibold text-white"
+          >
+            K
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-semibold">Kamal</p>
+            <Meta>Reassigned · Evening shift</Meta>
+          </div>
+          <span
+            style={{
+              animation: `inview-oseen ${OWNERSHIP_DURATION} ease-out infinite`,
+            }}
+            className="inview-oanim rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-medium text-emerald-700 opacity-0"
+          >
+            ✓ Seen
+          </span>
+        </li>
       </ol>
-      <p className="rounded-lg bg-primary/[0.06] px-3 py-2.5 text-xs text-neutral-600">
+
+      <p
+        style={{
+          animation: `inview-onote ${OWNERSHIP_DURATION} ease-out infinite, inview-oflash ${OWNERSHIP_DURATION} ease-in-out infinite`,
+        }}
+        className="inview-oanim rounded-lg px-3 py-2.5 text-xs text-neutral-600 opacity-0"
+      >
         Note: promised to confirm stock by 4:30 pm
       </p>
     </Card>
@@ -359,7 +815,7 @@ function Tag({
   return (
     <span
       className={cn(
-        "rounded-full px-2.5 py-1 text-[11px] font-medium ring-1",
+        "rounded-sm px-2.5 py-1 text-[11px] font-medium ring-1",
         tagTones[tone],
       )}
     >
@@ -401,12 +857,54 @@ const LABELLED = [
   },
 ] as const;
 
+const labelKeyframes = [
+  ...LABELLED.flatMap((_, i) => {
+    const start = 4 + i * 11;
+    return [
+      kf(`inview-lrow-${i}`, [
+        [0, HIDE],
+        [start, HIDE],
+        [start + 3, SHOW],
+        [94, SHOW],
+        [100, HIDE],
+      ]),
+      kf(`inview-lpend-${i}`, [
+        [0, "opacity:0;"],
+        [start + 2, "opacity:0;"],
+        [start + 4, "opacity:1;"],
+        [start + 12, "opacity:1;"],
+        [start + 14, "opacity:0;"],
+        [100, "opacity:0;"],
+      ]),
+      kf(`inview-llabel-${i}`, [
+        [0, "opacity:0;transform:scale(.6);"],
+        [start + 13, "opacity:0;transform:scale(.6);"],
+        [start + 17, "opacity:1;transform:scale(1);"],
+        [94, "opacity:1;transform:scale(1);"],
+        [100, "opacity:0;"],
+      ]),
+    ];
+  }),
+  kf("inview-lblink", [
+    [0, "opacity:.3;"],
+    [50, "opacity:1;"],
+    [100, "opacity:.3;"],
+  ]),
+].join(" ");
+
 export function LabelsPreview() {
   return (
     <Card
       className={cn(frameCard, "h-[17rem] overflow-hidden p-0")}
       aria-hidden
     >
+      <style>{`
+        ${labelKeyframes}
+        @media (prefers-reduced-motion: reduce) {
+          .inview-lanim { animation: none !important; opacity: 1 !important; transform: none !important; }
+          .inview-lpend { display: none; }
+        }
+      `}</style>
       <div className="flex flex-nowrap items-center gap-2 overflow-hidden whitespace-nowrap border-b border-neutral-100 px-4 py-3">
         <span className="text-xs text-neutral-500">Filter by</span>
         <Tag tone="neutral">Channel</Tag>
@@ -414,21 +912,48 @@ export function LabelsPreview() {
         <Tag tone="neutral">Status</Tag>
       </div>
       <ul className="divide-y divide-neutral-100">
-        {LABELLED.map((row) => (
-          <li key={row.name} className="flex items-center gap-3 px-4 py-3">
+        {LABELLED.map((row, i) => (
+          <li
+            key={row.name}
+            style={{
+              animation: `inview-lrow-${i} ${LABELS_DURATION} ease-out infinite`,
+            }}
+            className="inview-lanim flex items-center gap-3 px-4 py-3 opacity-0"
+          >
             <Avatar>{row.name[0] === "+" ? "?" : row.name[0]}</Avatar>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold">{row.name}</p>
               <p className="truncate text-xs text-neutral-500">{row.preview}</p>
             </div>
-            <span
-              className={cn(
-                "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ring-1",
-                tagTones[row.tone],
-              )}
-            >
-              {row.label}
-            </span>
+            <div className="grid shrink-0 justify-items-end">
+              <span
+                style={{
+                  gridArea: "1 / 1",
+                  animation: `inview-lpend-${i} ${LABELS_DURATION} ease-out infinite`,
+                }}
+                className="inview-lanim inview-lpend inline-flex items-center gap-1.5 rounded-sm bg-neutral-100 px-2.5 py-1 text-[11px] font-medium text-neutral-500 opacity-0 ring-0 ring-neutral-200"
+              >
+                <span
+                  style={{
+                    animation: "inview-lblink .8s ease-in-out infinite",
+                  }}
+                  className="inview-lanim size-1.5 rounded-full bg-primary"
+                />
+                Labelling…
+              </span>
+              <span
+                style={{
+                  gridArea: "1 / 1",
+                  animation: `inview-llabel-${i} ${LABELS_DURATION} ease-out infinite`,
+                }}
+                className={cn(
+                  "inview-lanim h-fit rounded-sm px-2.5 py-1 text-[11px] font-medium opacity-0  shadow-md shadow-muted-foreground/5",
+                  tagTones[row.tone],
+                )}
+              >
+                {row.label}
+              </span>
+            </div>
           </li>
         ))}
       </ul>
@@ -436,7 +961,7 @@ export function LabelsPreview() {
   );
 }
 
-/* 7 · Conversation summary */
+/* 7 · Conversation summary: an AI agent reads the chat and fills in the order details (7s loop) */
 const SUMMARY = [
   ["Product", "Floral dress"],
   ["Variant", "Black · M"],
@@ -444,21 +969,132 @@ const SUMMARY = [
   ["Payment", "COD"],
 ];
 
+const summaryKeyframes = [
+  kf("inview-sbubble", [
+    [0, HIDE],
+    [3, SHOW],
+    [94, SHOW],
+    [100, HIDE],
+  ]),
+  kf("inview-sscan", [
+    [0, "transform:translateX(-120%);opacity:0;"],
+    [6, "transform:translateX(-120%);opacity:1;"],
+    [28, "transform:translateX(420%);opacity:1;"],
+    [30, "transform:translateX(420%);opacity:0;"],
+    [100, "transform:translateX(420%);opacity:0;"],
+  ]),
+  kf("inview-sreading", [
+    [0, "opacity:0;"],
+    [3, "opacity:1;"],
+    [30, "opacity:1;"],
+    [33, "opacity:0;"],
+    [100, "opacity:0;"],
+  ]),
+  kf("inview-sready", [
+    [0, "opacity:0;"],
+    [33, "opacity:0;"],
+    [37, "opacity:1;"],
+    [94, "opacity:1;"],
+    [100, "opacity:0;"],
+  ]),
+  kf("inview-sspark", [
+    [0, "transform:rotate(0);"],
+    [100, "transform:rotate(360deg);"],
+  ]),
+  ...SUMMARY.map((_, i) =>
+    kf(`inview-sfield-${i}`, [
+      [0, "opacity:0;transform:scale(.92);"],
+      [32 + i * 5, "opacity:0;transform:scale(.92);"],
+      [36 + i * 5, "opacity:1;transform:scale(1);"],
+      [94, "opacity:1;transform:scale(1);"],
+      [100, "opacity:0;transform:scale(1);"],
+    ]),
+  ),
+  kf("inview-sflag", [
+    [0, "opacity:0;transform:translateY(6px);"],
+    [56, "opacity:0;transform:translateY(6px);"],
+    [60, "opacity:1;transform:none;"],
+    [94, "opacity:1;transform:none;"],
+    [100, "opacity:0;"],
+  ]),
+].join(" ");
+
 export function SummaryPreview() {
   return (
     <Card className={cn(frameCard, "h-[17rem] overflow-hidden")} aria-hidden>
-      <dl className="divide-y divide-neutral-100">
-        {SUMMARY.map(([k, v]) => (
+      <style>{`
+        ${summaryKeyframes}
+        @media (prefers-reduced-motion: reduce) {
+          .inview-sanim { animation: none !important; opacity: 1 !important; transform: none !important; }
+          .inview-sreading, .inview-sscan { display: none; }
+        }
+      `}</style>
+
+      <div className="flex items-center gap-2 text-xs font-semibold text-neutral-700">
+        <svg
+          viewBox="0 0 24 24"
+          style={{ animation: "inview-sspark 3s linear infinite" }}
+          className="inview-sanim size-4 fill-primary"
+        >
+          <path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z" />
+        </svg>
+        <span className="relative h-4 flex-1">
+          <span
+            style={{
+              animation: `inview-sreading ${SUMMARY_DURATION} ease-out infinite`,
+            }}
+            className="inview-sanim inview-sreading absolute inset-0 opacity-0"
+          >
+            AI is reading the chat…
+          </span>
+          <span
+            style={{
+              animation: `inview-sready ${SUMMARY_DURATION} ease-out infinite`,
+            }}
+            className="inview-sanim absolute inset-0 text-emerald-600 opacity-0"
+          >
+            ✓ Summary ready
+          </span>
+        </span>
+      </div>
+
+      <p
+        style={{
+          animation: `inview-sbubble ${SUMMARY_DURATION} ease-out infinite`,
+        }}
+        className="inview-sanim relative mt-3 overflow-hidden rounded-xl rounded-tl-sm bg-card px-3 py-2 text-xs leading-relaxed text-neutral-700 opacity-0"
+      >
+        “Hi! I’d like the floral dress in black, size M. Just one, cash on
+        delivery please.”
+        <span
+          style={{
+            animation: `inview-sscan ${SUMMARY_DURATION} ease-in-out infinite`,
+          }}
+          className="inview-sanim inview-sscan pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-transparent via-primary/25 to-transparent opacity-0"
+        />
+      </p>
+
+      <dl className="mt-3 grid grid-cols-2 gap-2">
+        {SUMMARY.map(([k, v], i) => (
           <div
             key={k}
-            className="flex items-center justify-between py-2.5 first:pt-0"
+            style={{
+              animation: `inview-sfield-${i} ${SUMMARY_DURATION} ease-out infinite`,
+            }}
+            className="inview-sanim rounded-sm bg-card px-3 py-2 opacity-0  shadow-xs"
           >
-            <dt className="text-sm text-neutral-500">{k}</dt>
-            <dd className="text-sm font-semibold">{v}</dd>
+            <dt className="text-[11px] text-neutral-500">{k}</dt>
+            <dd className="text-[13px] font-semibold">{v}</dd>
           </div>
         ))}
       </dl>
-      <div className="mt-3">
+
+      <div
+        style={{
+          animation: `inview-sflag ${SUMMARY_DURATION} ease-out infinite`,
+        }}
+        className="inview-sanim mt-3 opacity-0"
+      >
         <Pill tone="amber">Address · needs review</Pill>
       </div>
     </Card>
