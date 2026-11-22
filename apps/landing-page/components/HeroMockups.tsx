@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import Image, { type StaticImageData } from "next/image";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@repo/ui/lib/utils";
@@ -9,22 +8,49 @@ import { cn } from "@repo/ui/lib/utils";
 gsap.registerPlugin(ScrollTrigger);
 
 export type Mockup = {
-  src: StaticImageData;
-  alt: string;
+  key: string;
+  /** The card to show (real DOM, not an image). */
+  node: React.ReactNode;
+  /** Width in px the card is designed at; it is zoomed to fit its slot. */
+  designWidth: number;
+  /** Slot sizing/visibility classes (width as % of the strip, offsets). */
   className: string;
-  priority?: boolean;
   /** How far (px) the card sinks while the hero scrolls away. 0 = stays put. */
   sink: number;
 };
 
-/* Dashboard preview strip. The outer cards (two left, two right) drift down as
-   the page scrolls, so the centre inbox stays put while its neighbours sink. */
+/* Dashboard preview strip. Each card is designed at a fixed width and zoomed to
+   fill its slot, so the V-shape scales like the old screenshots did. The outer
+   cards (two left, two right) drift down as the page scrolls. */
 export default function HeroMockups({
   mockups,
 }: {
   mockups: readonly Mockup[];
 }) {
   const stripRef = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
+
+  // Fit every card to its slot, and keep it fitted on resize.
+  useEffect(() => {
+    const strip = stripRef.current;
+    if (!strip) return;
+    const fit = () => {
+      strip
+        .querySelectorAll<HTMLElement>("[data-design-width]")
+        .forEach((slot) => {
+          const inner = slot.firstElementChild as HTMLElement | null;
+          const design = Number(slot.dataset.designWidth);
+          if (!inner || !slot.clientWidth) return;
+          inner.style.width = `${design}px`;
+          inner.style.zoom = String(slot.clientWidth / design);
+        });
+      setReady(true);
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(strip);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const strip = stripRef.current;
@@ -57,21 +83,24 @@ export default function HeroMockups({
   return (
     <div
       ref={stripRef}
-      className="relative mx-auto flex aspect-100/38 w-full items-start justify-center overflow-hidden md:aspect-100/26 md:space-x-[-1%]"
+      className={cn(
+        "relative mx-auto flex aspect-100/56 w-full items-start justify-center overflow-hidden transition-opacity duration-500 md:aspect-100/24 md:space-x-[-1%]",
+        ready ? "opacity-100" : "opacity-0",
+      )}
     >
-      {mockups.map(({ src, alt, className, priority, sink }) => (
+      {mockups.map(({ key, node, designWidth, className, sink }) => (
         <div
-          key={alt}
+          key={key}
+          data-design-width={designWidth}
           data-sink={sink || undefined}
-          className={cn("relative will-change-transform", className)}
+          className={cn("relative min-w-0 will-change-transform", className)}
         >
-          <Image
-            src={src}
-            alt={alt}
-            sizes="(min-width: 1280px) 512px, (min-width: 768px) 40vw, 100vw"
-            priority={priority}
-            className="h-auto w-full"
-          />
+          <div
+            className="pointer-events-none select-none bg-card p-1 rounded-md"
+            aria-hidden
+          >
+            {node}
+          </div>
         </div>
       ))}
     </div>
