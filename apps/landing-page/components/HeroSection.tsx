@@ -1,13 +1,6 @@
 import { buttonVariants } from "@repo/ui/components/button";
 import { cn } from "@repo/ui/lib/utils";
-import HeroMockups, { type Mockup } from "./HeroMockups";
-import {
-  HeroDraft,
-  HeroFollowUps,
-  HeroInbox,
-  HeroLabels,
-  HeroSummary,
-} from "./HeroVisuals";
+import HeroInboxApp from "./HeroInboxApp";
 
 const PlayIcon = ({ className }: { className?: string }) => (
   <svg
@@ -30,47 +23,6 @@ const SparklesIcon = ({ className }: { className?: string }) => (
     <path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8zM19 14l.9 2.6L22.5 17.5l-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9z" />
   </svg>
 );
-
-/* Mockup screens arranged in a V: the centre inbox is largest and sits lowest,
-   dipping past the bottom edge; each step outward is smaller and lifted higher.
-   Widths and offsets are percentages of the strip width so the shape scales. */
-const MOCKUPS: readonly Mockup[] = [
-  {
-    key: "labels",
-    node: <HeroLabels />,
-    designWidth: 304,
-    className: "hidden md:block md:w-[18%] md:mt-0 md:z-0",
-    sink: 180,
-  },
-  {
-    key: "follow-ups",
-    node: <HeroFollowUps />,
-    designWidth: 338,
-    className: "hidden md:block md:w-[20%] md:mt-[4%] md:z-10",
-    sink: 120,
-  },
-  {
-    key: "inbox",
-    node: <HeroInbox />,
-    designWidth: 760,
-    className: "w-full md:w-[45%] md:mt-[7%] z-20",
-    sink: 0,
-  },
-  {
-    key: "draft",
-    node: <HeroDraft />,
-    designWidth: 338,
-    className: "hidden md:block md:w-[20%] md:mt-[4%] md:z-10",
-    sink: 120,
-  },
-  {
-    key: "summary",
-    node: <HeroSummary />,
-    designWidth: 304,
-    className: "hidden md:block md:w-[18%] md:mt-0 md:z-0",
-    sink: 180,
-  },
-];
 
 const HeroSection = () => {
   return (
@@ -152,10 +104,10 @@ const HeroSection = () => {
             </a>
           </div>
         </div>
-
-        {/* Dashboard preview strip: V-shaped, centre card dips off the bottom;
-            the outer cards sink on scroll (GSAP ScrollTrigger). */}
-        <HeroMockups mockups={MOCKUPS} />
+        {/* One big, self-playing Unified Inbox below the text */}
+        <div className="mx-auto mt-12 w-full max-w-295 md:mt-16">
+          <HeroInboxApp />
+        </div>
       </div>
     </section>
   );
