@@ -15,7 +15,7 @@ import Image from "next/image";
 const STEPS = [
   {
     title: "See messages from all three apps in one inbox",
-    copy: "Aisha’s Instagram DM appears in your shared inbox alongside WhatsApp and Messenger chats.",
+    copy: "Afthah’s Instagram DM appears in your shared inbox alongside WhatsApp and Messenger chats.",
     visual: <InboxCard />,
     imageClassName: "pt-1 pl-1 pb-2 pr-2",
     bg: BG5,
@@ -36,7 +36,7 @@ const STEPS = [
   },
   {
     title: "Collect the details and confirm the order",
-    copy: "Aisha says she’ll take it. If a delivery detail is missing, the enquiry stays open. Once you’ve collected what you need, mark the order confirmed.",
+    copy: "Afthah says she’ll take it. If a delivery detail is missing, the enquiry stays open. Once you’ve collected what you need, mark the order confirmed.",
     visual: <OrderTimelineCard />,
     imageClassName: "pb-1 pl-2 pt-1 pr-1",
     bg: BG5,

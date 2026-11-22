@@ -1,6 +1,7 @@
 import { cn } from "@repo/ui/lib/utils";
 import { ChannelBadge } from "./ChannelBadge";
 import { Avatar, Card, Meta, Pill } from "./HowItWorksCards";
+import Image from "next/image";
 
 /* Feature-section mockups built in the site's own UI language
    (replaces the old SVG screenshots). */
@@ -10,8 +11,8 @@ const solid = "bg-white backdrop-blur-none";
 /* 1 · Shared inbox with the next action per chat */
 const INBOX = [
   {
-    name: "Aisha",
-    channel: "Instagram",
+    name: "Afthah",
+    channel: "https://img.icons8.com/fluency/96/instagram-new.png",
     preview: "Do you have this dress in black, size M?",
     action: "Stock check",
     tone: "amber",
@@ -19,7 +20,7 @@ const INBOX = [
   },
   {
     name: "Nuwan",
-    channel: "WhatsApp",
+    channel: "https://img.icons8.com/office/40/whatsapp--v1.png",
     preview: "Can I pay COD for two items?",
     action: "Delivery quote",
     tone: "blue",
@@ -27,7 +28,7 @@ const INBOX = [
   },
   {
     name: "Priya",
-    channel: "Messenger",
+    channel: "https://img.icons8.com/fluency/96/facebook-messenger--v2.png",
     preview: "Is the blue one still in stock?",
     action: "Awaiting reply",
     tone: "green",
@@ -39,7 +40,7 @@ export function InboxPreview() {
   return (
     <Card className={cn(solid, "p-0 overflow-hidden")} aria-hidden>
       <div className="flex items-center justify-between border-b border-neutral-100 px-5 py-3.5">
-        <p className="text-sm font-semibold">Shared inbox</p>
+        <p className="text-sm font-semibold">Unified inbox</p>
         <span className="text-xs text-neutral-400">3 open</span>
       </div>
       <ul className="divide-y divide-neutral-100">
@@ -49,7 +50,15 @@ export function InboxPreview() {
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <p className="text-sm font-semibold">{row.name}</p>
-                <ChannelBadge channel={row.channel} />
+                {/* <ChannelBadge channel={row.channel} /> */}
+
+                <Image
+                  src={row.channel}
+                  alt={row.action}
+                  width={100}
+                  height={100}
+                  className="w-5"
+                />
               </div>
               <p className="truncate text-xs text-neutral-500">{row.preview}</p>
             </div>
@@ -134,7 +143,7 @@ export function DraftPreview() {
         Is the black M available?
       </p>
       <p className="ml-auto max-w-[90%] rounded-xl rounded-tr-sm bg-primary/10 px-3.5 py-2.5 text-sm leading-relaxed text-neutral-700">
-        Hi Aisha! Checking black, M and COD for you now.
+        Hi Afthah! Checking black, M and COD for you now.
       </p>
       <div className="flex items-center gap-2 pt-1">
         <span className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-white shadow-sm">

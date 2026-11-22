@@ -25,7 +25,7 @@ const ProblemSection = () => (
 
       <div className="mx-auto mt-12 max-w-md space-y-3" aria-hidden>
         <Message
-          name="Aisha"
+          name="Afthah"
           channel="Instagram"
           text="Is the black dress available in size M?"
           status="Waiting on us"

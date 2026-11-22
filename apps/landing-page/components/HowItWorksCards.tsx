@@ -80,7 +80,7 @@ export const Meta = ({ children }: { children: React.ReactNode }) => (
 /* 1 · Inbox */
 const INBOX_ROWS = [
   {
-    name: "Aisha",
+    name: "Afthah",
     channel: "https://img.icons8.com/fluency/96/instagram-new.png",
     preview: "Black dress in size M?",
     selected: true,
@@ -151,7 +151,7 @@ export function InboxCard() {
         <div className="p-4 md:p-5">
           <div className="flex items-center gap-2.5">
             <Avatar>A</Avatar>
-            <p className="text-sm font-semibold">Aisha</p>
+            <p className="text-sm font-semibold">Afthah</p>
             <Image
               src={INBOX_ROWS[0].channel}
               alt="Instagram"
@@ -181,7 +181,7 @@ export function FollowUpCard() {
             <Avatar>Y</Avatar>
             <div>
               <p className="text-sm font-semibold">You</p>
-              <Meta>Replying to Aisha · Instagram</Meta>
+              <Meta>Replying to Afthah · Instagram</Meta>
             </div>
           </>
         }
@@ -209,7 +209,7 @@ export function ReplyDraftCard() {
         right={<Pill tone="green">Stock checked by seller</Pill>}
       />
       <p className="mt-3 rounded-lg bg-primary/[0.07] p-3.5 text-[15px] leading-relaxed text-neutral-700">
-        Hi Aisha! The black dress is available in size M, and we offer cash on
+        Hi Afthah! The black dress is available in size M, and we offer cash on
         delivery to Kandy.
       </p>
       <div className="mt-4 flex items-center gap-2">

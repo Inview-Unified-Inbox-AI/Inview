@@ -35,7 +35,7 @@ export function BentoCard({
       {visual && (
         <div
           className={cn(
-            "relative isolate mt-6 flex flex-1 flex-col overflow-hidden",
+            "relative shadow-xl  isolate mt-6 flex flex-1 flex-col overflow-hidden",
             framed && "mx-6 mt-auto flex-none rounded-t-md px-1 pt-1 md:mx-8",
           )}
         >
@@ -44,11 +44,11 @@ export function BentoCard({
             alt=""
             fill
             sizes="(min-width: 768px) 60vw, 100vw"
-            className={cn("-z-10 object-cover", bgClass)}
+            className={cn("-z-10 object-cover shadow-xl ", bgClass)}
           />
           <div
             className={cn(
-              "relative",
+              "relative shadow-xl",
               !framed && "px-5 pt-6 md:px-8 md:pt-8",
               imgClass,
             )}

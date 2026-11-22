@@ -47,6 +47,8 @@ const FeaturesSection = () => (
           className="md:col-span-2"
           title="Start with a draft you can edit"
           visual={<DraftPreview />}
+          bgClass=""
+          imgClass=""
           framed
         >
           Use your shop’s product details, listed prices and delivery policies
@@ -58,8 +60,8 @@ const FeaturesSection = () => (
           className="md:col-span-3"
           title="See where work is piling up"
           visual={<ReportPreview />}
-          bgClass=""
-          imgClass=""
+          bgClass=" rounded-lg -ml-7 mt-5"
+          imgClass="md:pl-0 -ml-2   -mb-5 -mt-2"
         >
           Review open and overdue follow-ups alongside enquiries your team
           marked as confirmed orders.
