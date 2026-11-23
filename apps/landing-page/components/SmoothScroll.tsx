@@ -35,7 +35,14 @@ function AnchorLinks() {
         "(prefers-reduced-motion: reduce)",
       ).matches;
       lenis.scrollTo(Math.max(0, y), { duration: 1.3, immediate: reduce });
-      history.pushState(null, "", hash);
+      // Keep the address bar clean: no #section in the URL.
+      if (window.location.hash) {
+        history.replaceState(
+          null,
+          "",
+          window.location.pathname + window.location.search,
+        );
+      }
     };
 
     document.addEventListener("click", onClick);
