@@ -23,7 +23,7 @@ export type SaveResult =
   | { ok: false; reason: "not-configured" | "error" };
 
 function admin() {
-  const url = process.env.SUPABASE_URL;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return null;
   return createClient(url, key, {
@@ -61,7 +61,7 @@ export async function saveSignup(signup: Signup): Promise<SaveResult> {
   const db = admin();
   if (!db) {
     console.error(
-      "[waitlist] SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY are not set; signup not saved.",
+      "[waitlist] NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY are not set; signup not saved.",
     );
     return { ok: false, reason: "not-configured" };
   }
