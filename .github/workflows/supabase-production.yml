@@ -93,7 +93,7 @@ jobs:
       - run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
 
       - name: Apply migrations to Production
-        run: supabase db push --remote
+        run: supabase db push --remote --yes
 
   verify:
     name: Verify Production is up to date
