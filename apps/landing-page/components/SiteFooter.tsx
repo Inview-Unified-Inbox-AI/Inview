@@ -1,8 +1,16 @@
+import Logo from "@/public/logo.svg";
+import Image from "next/image";
 const SiteFooter = () => (
   <footer className="border-t border-border py-10">
     <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 sm:px-10 md:flex-row md:items-center md:justify-between">
       <div>
-        <p className="text-lg font-semibold">Inview</p>
+        <Image
+          src={Logo}
+          alt="Inview Unified Inbox"
+          width={1000}
+          height={1000}
+          className="w-100"
+        />
         <p className="mt-1 text-sm text-muted-foreground">
           The sales inbox for shops that sell through chat.
         </p>

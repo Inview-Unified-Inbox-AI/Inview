@@ -4,7 +4,8 @@ import { useActionState } from "react";
 import { Input } from "@repo/ui/components/input";
 import { cn } from "@repo/ui/lib/utils";
 import { joinWaitlist, type WaitlistState } from "@/app/waitlist-action";
-
+import BG from "@/public/landing-page-mockup/bg-5.jpg";
+import Image from "next/image";
 const CHANNELS = ["Instagram", "WhatsApp", "Messenger", "Other"];
 const SELLS = ["Clothing", "Jewellery", "Accessories", "Other"];
 
@@ -56,8 +57,15 @@ const WaitlistSection = () => {
       aria-labelledby="waitlist-heading"
       className="mx-3 my-20 scroll-mt-20 sm:mx-5 md:my-32"
     >
-      <div className="mx-auto grid max-w-6xl gap-10 rounded-2xl bg-primary px-5 py-12 sm:px-10 md:grid-cols-2 md:gap-16 md:py-16">
-        <div className="text-white">
+      <div className="relative isolate mx-auto grid max-w-6xl gap-10 overflow-hidden rounded-2xl bg-primary p-3 md:grid-cols-2 md:gap-16 md:p-4">
+        <Image
+          src={BG}
+          alt=""
+          fill
+          sizes="(min-width: 1152px) 1152px, 100vw"
+          className="-z-10 object-cover"
+        />
+        <div className="text-white z-1 px-5 py-12 sm:px-10 md:py-16">
           <h2
             id="waitlist-heading"
             className="text-3xl leading-tight font-semibold tracking-tight text-balance md:text-5xl"
@@ -70,7 +78,7 @@ const WaitlistSection = () => {
           </p>
         </div>
 
-        <div className="rounded-2xl bg-white p-6 text-neutral-900 md:p-8">
+        <div className="rounded-xl z-1 bg-white/90 backdrop-blur-lg shadow-2xl shadow-muted-foreground/10 p-6 text-neutral-900 md:p-8">
           {state.status === "success" ? (
             <div role="status" className="py-8 text-center">
               <span className="mx-auto grid size-12 place-items-center rounded-full bg-emerald-100 text-xl text-emerald-700">
@@ -88,7 +96,8 @@ const WaitlistSection = () => {
             <form action={action} noValidate className="space-y-4">
               {state.status === "error" && !state.errors && (
                 <p role="alert" className="text-sm text-destructive">
-                  We couldn’t submit your signup. Please try again.
+                  {state.message ??
+                    "We couldn’t submit your signup. Please try again."}
                 </p>
               )}
 
@@ -147,7 +156,9 @@ const WaitlistSection = () => {
                 </div>
               </Field>
 
-              <fieldset aria-describedby={e.channels ? "channels-error" : undefined}>
+              <fieldset
+                aria-describedby={e.channels ? "channels-error" : undefined}
+              >
                 <legend className="text-sm font-medium">
                   Where do customers message you?
                 </legend>
@@ -168,14 +179,19 @@ const WaitlistSection = () => {
                   ))}
                 </div>
                 {e.channels && (
-                  <p id="channels-error" className="mt-1.5 text-sm text-destructive">
+                  <p
+                    id="channels-error"
+                    className="mt-1.5 text-sm text-destructive"
+                  >
                     {e.channels}
                   </p>
                 )}
               </fieldset>
 
               <fieldset aria-describedby={e.sells ? "sells-error" : undefined}>
-                <legend className="text-sm font-medium">What do you sell?</legend>
+                <legend className="text-sm font-medium">
+                  What do you sell?
+                </legend>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {SELLS.map((s) => (
                     <label key={s} className="cursor-pointer">
@@ -193,7 +209,10 @@ const WaitlistSection = () => {
                   ))}
                 </div>
                 {e.sells && (
-                  <p id="sells-error" className="mt-1.5 text-sm text-destructive">
+                  <p
+                    id="sells-error"
+                    className="mt-1.5 text-sm text-destructive"
+                  >
                     {e.sells}
                   </p>
                 )}
