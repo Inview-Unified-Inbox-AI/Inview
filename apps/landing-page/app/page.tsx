@@ -9,8 +9,10 @@ import PricingSection from "@/components/PricingSection";
 import WaitlistSection from "@/components/WaitlistSection";
 import FaqSection from "@/components/FaqSection";
 import SiteFooter from "@/components/SiteFooter";
+import { getSignupCount } from "@/lib/waitlist-store";
 
-export default function Home() {
+export default async function Home() {
+  const signupCount = await getSignupCount();
   return (
     <div id="top">
       <SiteHeader />
@@ -22,7 +24,7 @@ export default function Home() {
         {/* <ConnectSection /> */}
         <AudienceSection />
         <PricingSection />
-        <WaitlistSection />
+        <WaitlistSection signupCount={signupCount} />
         <FaqSection />
       </main>
       <SiteFooter />

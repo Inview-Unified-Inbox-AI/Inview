@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@repo/ui/lib/utils";
 import { Send, SendHorizonal } from "lucide-react";
+import Image from "next/image";
 
 /* A high-fidelity, self-playing Unified Inbox for the hero.
    Layout: nav rail · chat list (every channel) · conversation · lead details.
@@ -483,7 +484,40 @@ export default function HeroInboxApp() {
                         )}
                       />
                     )}
-                    {c}
+                    {c === "All" && "All"}
+                    {c === "Instagram" && (
+                      <Image
+                        src={
+                          "https://img.icons8.com/fluency/96/instagram-new.png"
+                        }
+                        alt="Instagram"
+                        width={100}
+                        height={100}
+                        className="w-5"
+                      />
+                    )}
+                    {c === "Messenger" && (
+                      <Image
+                        src={
+                          "https://img.icons8.com/fluency/96/facebook-messenger--v2.png"
+                        }
+                        alt="Instagram"
+                        width={100}
+                        height={100}
+                        className="w-5"
+                      />
+                    )}
+                    {c === "WhatsApp" && (
+                      <Image
+                        src={
+                          "https://img.icons8.com/office/40/whatsapp--v1.png"
+                        }
+                        alt="Instagram"
+                        width={100}
+                        height={100}
+                        className="w-5"
+                      />
+                    )}
                   </span>
                 ),
               )}
@@ -527,7 +561,7 @@ export default function HeroInboxApp() {
                     {s.AfthahLabelled ? (
                       <span
                         className={cn(
-                          "animate-[hero-in_.4s_ease-out_both] rounded-full px-2 py-0.5 text-[10px] font-medium ring-1",
+                          "animate-[hero-in_.4s_ease-out_both] rounded-sm px-2 py-1 shadow-sm shadow-muted-foreground/10 text-[13px] font-medium ring-0",
                           LABEL_STYLE[s.confirmed ? "Order" : "Sales enquiry"],
                         )}
                       >
@@ -600,7 +634,14 @@ export default function HeroInboxApp() {
             <div className="flex-1">
               <p className="text-sm font-semibold">Afthah</p>
               <p className="flex items-center gap-1.5 text-[11px] text-neutral-500">
-                <span className="size-1.5 rounded-full bg-pink-500" /> Instagram
+                <Image
+                  src={"https://img.icons8.com/fluency/96/instagram-new.png"}
+                  alt="Instagram"
+                  width={100}
+                  height={100}
+                  className="w-5"
+                />
+                Instagram
               </p>
             </div>
             {s.selected && (
@@ -645,7 +686,7 @@ export default function HeroInboxApp() {
             )}
 
             <div className="flex items-end gap-2.5">
-              <div className="min-h-[3.25rem] flex-1 rounded-xl bg-neutral-50 px-3.5 py-3 text-[13px] ring-1 ring-neutral-200">
+              <div className="min-h-[3.25rem] flex-1 rounded-md bg-neutral-50 px-3.5 py-3 text-[13px] ring-1 ring-muted-foreground/10 shadow-md shadow-muted-foreground/5">
                 {s.composer === "generating" ? (
                   <div className="space-y-2">
                     <span className="hero-shimmer block h-3 w-4/5 rounded" />
@@ -677,7 +718,7 @@ export default function HeroInboxApp() {
               </div>
               <span
                 data-c="ai-draft"
-                className="flex h-[3.25rem] items-center gap-1.5 rounded-xl bg-white px-3.5 text-xs font-semibold text-primary ring-1 ring-primary/30"
+                className="flex h-[3.25rem] items-center gap-1.5 rounded-sm bg-white px-3.5 text-xs font-semibold text-primary ring-1 ring-primary/30"
               >
                 ✦ AI draft
               </span>
@@ -766,14 +807,14 @@ export default function HeroInboxApp() {
             </p>
             <ul className="mt-2.5 space-y-2">
               {s.followUps.length === 0 && (
-                <li className="rounded-lg bg-white px-3 py-2.5 text-[11px] text-neutral-400 ring-1 ring-neutral-200">
+                <li className="rounded-md bg-white px-3 py-2.5 text-[11px] text-neutral-400 ring-1 ring-muted-foreground/5 shadow-md shadow-muted-foreground/5">
                   Nothing promised yet
                 </li>
               )}
               {s.followUps.map((f) => (
                 <li
                   key={f.id}
-                  className="animate-[hero-in_.45s_ease-out_both] rounded-lg bg-white px-3 py-2.5 ring-1 ring-neutral-200"
+                  className="animate-[hero-in_.45s_ease-out_both] rounded-md bg-white px-3 py-2.5  ring-1 ring-muted-foreground/5 shadow-md shadow-muted-foreground/5"
                 >
                   <p className="text-[12px] font-semibold">{f.text}</p>
                   <p

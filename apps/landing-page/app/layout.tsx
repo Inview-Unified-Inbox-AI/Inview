@@ -34,6 +34,12 @@ export const metadata: Metadata = {
   },
 };
 
+// The reference desktop layout is a 1440px-wide viewport. On any PC-sized
+// screen (>= MIN_SCALE_WIDTH) the page is scaled to match it, up or down.
+// Narrower screens (tablet/phone) keep the normal responsive layout.
+const DESIGN_WIDTH = 1440;
+const MIN_SCALE_WIDTH = 1024;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -45,6 +51,16 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${jakarta.variable} ${geistMono.variable}`}
     >
+      <head>
+        {/* Scale the whole page (px and rem alike) to the design width so the
+            layout is identical on every PC screen or zoom level. Runs before
+            paint to avoid a flash of the unscaled layout. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var d=document.documentElement;function f(){var w=window.innerWidth;d.style.zoom=w>=${MIN_SCALE_WIDTH}?String(w/${DESIGN_WIDTH}):"";}f();addEventListener("resize",f);})();`,
+          }}
+        />
+      </head>
       <body>
         <ThemeProvider defaultTheme="light">
           {/* <ThemeToggle className="fixed top-4 right-4 z-50" /> */}
