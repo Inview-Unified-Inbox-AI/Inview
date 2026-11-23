@@ -42,5 +42,8 @@ jobs:
       - name: Show what is about to be applied
         run: supabase db push --remote --dry-run
 
+      # --yes: the CLI asks for confirmation before changing a remote database and
+      # a CI run has no terminal to answer it, so without this flag it exits
+      # without applying anything. The dry run above shows what is applied.
       - name: Apply migrations
-        run: supabase db push --remote
+        run: supabase db push --remote --yes
