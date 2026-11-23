@@ -44,7 +44,7 @@ function Field({
 
 const inputClass = "h-11 bg-white text-base";
 
-const WaitlistSection = () => {
+const WaitlistSection = ({ signupCount }: { signupCount?: number | null }) => {
   const [state, action, pending] = useActionState(joinWaitlist, initial);
   const e = state.errors ?? {};
   const v = (state.values ?? {}) as Record<string, string | string[]>;
@@ -72,6 +72,16 @@ const WaitlistSection = () => {
           >
             Try Inview with your shop.
           </h2>
+          {signupCount ? (
+            <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium backdrop-blur-sm">
+              <span
+                aria-hidden
+                className="size-2 rounded-full bg-emerald-300"
+              />
+              {signupCount.toLocaleString("en-US")}{" "}
+              {signupCount === 1 ? "shop has" : "shops have"} joined so far
+            </p>
+          ) : null}
           <p className="mt-5 max-w-md text-base leading-relaxed text-pretty md:text-lg">
             Tell us what you sell and where customers message you. We’ll contact
             you when we’re inviting shops like yours into early access.

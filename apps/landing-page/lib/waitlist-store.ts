@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { unstable_cache } from "next/cache";
 
 /* Where waitlist signups go. Server-only: imported from the "use server"
    action, and it reads secrets that must never reach the browser.
@@ -56,6 +57,24 @@ async function appendToSheet(signup: Signup, createdAt: string) {
     console.error("[waitlist] sheet webhook failed", err);
   }
 }
+
+/** Total signups, cached for a minute. Null when the count is unavailable. */
+export const getSignupCount = unstable_cache(
+  async (): Promise<number | null> => {
+    const db = admin();
+    if (!db) return null;
+    const { count, error } = await db
+      .from("waitlist_signups")
+      .select("*", { count: "exact", head: true });
+    if (error) {
+      console.error("[waitlist] count failed", error);
+      return null;
+    }
+    return count;
+  },
+  ["waitlist-signup-count"],
+  { revalidate: 60 },
+);
 
 export async function saveSignup(signup: Signup): Promise<SaveResult> {
   const db = admin();
