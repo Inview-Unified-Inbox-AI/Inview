@@ -85,7 +85,7 @@ export default function ProblemScene() {
   return (
     <div ref={ref} className="mx-auto w-full max-w-md" aria-hidden>
       {/* The conversation: the largest element */}
-      <div className="rounded-2xl bg-white p-5 shadow-xl shadow-neutral-900/5 ring-1 ring-neutral-200">
+      <div className="rounded-xl bg-white p-5 shadow-xl shadow-neutral-900/5 ring-1 ring-neutral-200/50">
         <div className="flex items-center gap-2.5 border-b border-neutral-100 pb-3.5">
           <Avatar>A</Avatar>
           <p className="text-sm font-semibold">Afthah</p>
@@ -120,7 +120,7 @@ export default function ProblemScene() {
             armed={armed}
             className={n.offset}
           >
-            <div className="flex items-center gap-3 rounded-xl bg-white px-3.5 py-2.5 shadow-sm ring-1 ring-neutral-200/80">
+            <div className="flex items-center gap-3 rounded-lg bg-white px-3.5 py-2.5 shadow-sm ring-1 ring-neutral-200/20">
               <span className={cn("size-2 shrink-0 rounded-full", n.dot)} />
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-semibold text-neutral-700">

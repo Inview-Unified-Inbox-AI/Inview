@@ -46,8 +46,8 @@ export default function RootLayout({
       className={`${jakarta.variable} ${geistMono.variable}`}
     >
       <body>
-        <ThemeProvider>
-          <ThemeToggle className="fixed top-4 right-4 z-50" />
+        <ThemeProvider defaultTheme="light">
+          {/* <ThemeToggle className="fixed top-4 right-4 z-50" /> */}
           <SmoothScroll>{children}</SmoothScroll>
         </ThemeProvider>
       </body>

@@ -105,7 +105,7 @@ const HeroSection = () => {
           </div>
         </div>
         {/* One big, self-playing Unified Inbox below the text */}
-        <div className="mx-auto mt-12 w-full max-w-295 md:mt-16">
+        <div className="mx-auto mt-12 w-full max-w-295 md:mt-16 shadow-2xl">
           <HeroInboxApp />
         </div>
       </div>

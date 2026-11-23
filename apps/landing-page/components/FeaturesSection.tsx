@@ -19,7 +19,7 @@ const FeaturesSection = () => (
     <div className="mx-auto max-w-7xl px-5 sm:px-5">
       <SectionHeading
         eyebrow="Features"
-        title="Know what’s waiting and who’s handling it."
+        title="Know what Inview can do for you"
         id="features-heading"
       />
 

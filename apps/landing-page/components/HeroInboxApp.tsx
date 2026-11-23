@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@repo/ui/lib/utils";
+import { Send, SendHorizonal } from "lucide-react";
 
 /* A high-fidelity, self-playing Unified Inbox for the hero.
    Layout: nav rail · chat list (every channel) · conversation · lead details.
@@ -683,7 +684,7 @@ export default function HeroInboxApp() {
               <span
                 data-c="mic"
                 className={cn(
-                  "grid size-[3.25rem] place-items-center rounded-xl ring-1 transition-colors",
+                  "grid h-13 w-13 place-items-center rounded-full ring-1 transition-colors",
                   s.composer === "voice"
                     ? "bg-primary text-white ring-primary"
                     : "bg-white text-neutral-600 ring-neutral-200",
@@ -691,7 +692,7 @@ export default function HeroInboxApp() {
               >
                 <svg
                   viewBox="0 0 24 24"
-                  className="size-4 fill-none stroke-current stroke-2"
+                  className="size-5 fill-none stroke-current stroke-2"
                   strokeLinecap="round"
                 >
                   <rect x="9" y="3" width="6" height="11" rx="3" />
@@ -701,13 +702,13 @@ export default function HeroInboxApp() {
               <span
                 data-c="send"
                 className={cn(
-                  "grid h-[3.25rem] place-items-center rounded-xl px-5 text-sm font-semibold transition-colors",
+                  "grid h-13 w-13 place-items-center rounded-full  text-sm font-semibold transition-colors",
                   s.composer === "typing"
                     ? "bg-primary text-white shadow-sm"
                     : "bg-neutral-100 text-neutral-400",
                 )}
               >
-                Send
+                <SendHorizonal className="size-5" />
               </span>
             </div>
           </div>

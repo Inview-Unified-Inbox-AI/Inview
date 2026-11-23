@@ -217,7 +217,7 @@ export function HandoffPreview() {
               {h.who}
             </span>
           </div>
-          <p className="mt-3 rounded-lg bg-neutral-50 px-3 py-2 text-xs text-neutral-600">
+          <p className="mt-3 rounded-lg bg-card shadow-xs px-3 py-2 text-xs text-neutral-600">
             {h.note}
           </p>
         </Card>
