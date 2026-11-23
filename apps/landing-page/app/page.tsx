@@ -1,29 +1,31 @@
-import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
-import styles from "./page.module.css";
-import { FamilyReceiveComponent } from "@repo/ui/components/family-receive-button";
-import NavigationMenuDemo from "./sample-ui/nav-menu";
-
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
-
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
-
-  return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
+import HeroSection from "@/components/HeroSection";
+import SiteHeader from "@/components/SiteHeader";
+import ProblemSection from "@/components/ProblemSection";
+import HowItWorksSection from "@/components/HowItWorksSection";
+import FeaturesSection from "@/components/FeaturesSection";
+import ConnectSection from "@/components/ConnectSection";
+import AudienceSection from "@/components/AudienceSection";
+import PricingSection from "@/components/PricingSection";
+import WaitlistSection from "@/components/WaitlistSection";
+import FaqSection from "@/components/FaqSection";
+import SiteFooter from "@/components/SiteFooter";
 
 export default function Home() {
   return (
-    <div>
-      <NavigationMenuDemo />
+    <div id="top">
+      <SiteHeader />
+      <main>
+        <HeroSection />
+        <ProblemSection />
+        <HowItWorksSection />
+        <FeaturesSection />
+        {/* <ConnectSection /> */}
+        <AudienceSection />
+        <PricingSection />
+        <WaitlistSection />
+        <FaqSection />
+      </main>
+      <SiteFooter />
     </div>
   );
 }
