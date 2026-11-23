@@ -43,7 +43,7 @@ const SiteHeader = () => {
       <div
         aria-hidden
         className={cn(
-          "absolute inset-0 border-b border-muted-foreground/5 bg-background/70 backdrop-blur-md transition-opacity duration-300 motion-reduce:transition-none",
+          "absolute inset-0 border-b ring-0 border-muted-foreground/5 bg-background/70 backdrop-blur-md transition-opacity duration-400 motion-reduce:transition-none",
           compact ? "opacity-0" : "opacity-100",
         )}
       />
@@ -51,9 +51,9 @@ const SiteHeader = () => {
       <nav
         aria-label="Main"
         className={cn(
-          "pointer-events-auto relative mx-auto flex items-center justify-between transition-all duration-300 ease-out motion-reduce:transition-none",
+          "pointer-events-auto relative mx-auto flex items-center justify-between transition-all duration-400 ease-out motion-reduce:transition-none",
           compact
-            ? "translate-y-4 w-[calc(100%-1.5rem)] max-w-3xl gap-6 rounded-full bg-background/80 py-1.5 pl-5 pr-1.5 shadow-lg shadow-black/5 ring-1 ring-border backdrop-blur-md"
+            ? "translate-y-4 w-[calc(100%-1.5rem)] max-w-3xl gap-6 rounded-full bg-background/80 py-1.5 pl-5 pr-1.5 shadow-lg shadow-black/5 ring-1 ring-muted-foreground/5 backdrop-blur-md"
             : "translate-y-0 w-full max-w-6xl gap-6 rounded-none bg-transparent px-5 py-4 shadow-none ring-0 ring-transparent sm:px-10",
         )}
       >
