@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { buttonVariants } from "@repo/ui/components/button";
 import { cn } from "@repo/ui/lib/utils";
-
+import Logo from "@/public/logo.svg";
+import Image from "next/image";
 const LINKS = [
   ["How it works", "#how-it-works"],
   ["Features", "#features"],
@@ -57,7 +58,7 @@ const SiteHeader = () => {
         )}
       >
         <a href="#top" className="text-lg font-semibold tracking-tight">
-          Inview
+          <Image src={Logo} alt="Inview" width={150} height={150} />
         </a>
         <ul className="hidden items-center gap-6 text-sm font-medium text-muted-foreground md:flex">
           {LINKS.map(([label, href]) => (
