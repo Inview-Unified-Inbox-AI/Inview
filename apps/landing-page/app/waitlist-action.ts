@@ -1,14 +1,40 @@
 "use server";
 
+import { headers } from "next/headers";
+import { saveSignup } from "@/lib/waitlist-store";
+
 export type WaitlistState = {
   status: "idle" | "success" | "error";
   message?: string;
-  errors?: Partial<Record<"name" | "shop" | "phone" | "channels" | "sells" | "link", string>>;
+  errors?: Partial<
+    Record<"name" | "shop" | "phone" | "channels" | "sells" | "link", string>
+  >;
   values?: Record<string, string | string[]>;
 };
 
 const SELLS = ["Clothing", "Jewellery", "Accessories", "Other"];
 const CHANNELS = ["Instagram", "WhatsApp", "Messenger", "Other"];
+
+// Must match the check constraints in supabase/migrations/*_waitlist_signups.sql
+const MAX_NAME = 120;
+const MAX_SHOP = 120;
+const MAX_LINK = 300;
+
+/* Light per-IP rate limit. In-memory, so it is per server instance (good enough
+   to stop a loop hammering the form; put a shared store such as Upstash or
+   Vercel KV behind it if abuse becomes real). */
+const WINDOW_MS = 10 * 60 * 1000;
+const MAX_PER_WINDOW = 5;
+const hits = new Map<string, number[]>();
+
+function rateLimited(ip: string) {
+  const now = Date.now();
+  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
+  recent.push(now);
+  hits.set(ip, recent);
+  if (hits.size > 5000) hits.clear(); // keep memory bounded
+  return recent.length > MAX_PER_WINDOW;
+}
 
 export async function joinWaitlist(
   _prev: WaitlistState,
@@ -30,15 +56,22 @@ export async function joinWaitlist(
   const errors: NonNullable<WaitlistState["errors"]> = {};
 
   if (!name) errors.name = "Enter your name.";
+  else if (name.length > MAX_NAME) errors.name = `Keep your name under ${MAX_NAME} characters.`;
   if (!shop) errors.shop = "Enter your shop name.";
+  else if (shop.length > MAX_SHOP)
+    errors.shop = `Keep your shop name under ${MAX_SHOP} characters.`;
   if (!/^\d{9}$/.test(phone.replace(/^0/, "")))
     errors.phone = "Enter a valid Sri Lankan number, for example 77 123 4567.";
   if (!channels.length || !channels.every((c) => CHANNELS.includes(c)))
     errors.channels = "Choose at least one.";
   if (!SELLS.includes(sells)) errors.sells = "Choose what you sell.";
-  if (link) {
+  if (link.length > MAX_LINK) {
+    errors.link = `Keep the link under ${MAX_LINK} characters.`;
+  } else if (link) {
     try {
-      const url = new URL(/^https?:\/\//i.test(link) ? link : `https://${link}`);
+      const url = new URL(
+        /^https?:\/\//i.test(link) ? link : `https://${link}`,
+      );
       if (!url.hostname.includes(".")) throw new Error("bad host");
     } catch {
       errors.link = "Enter a valid link, or leave this blank.";
@@ -49,7 +82,36 @@ export async function joinWaitlist(
     return { status: "error", errors, values };
   }
 
-  // TODO: persist the signup (Supabase table, sheet or email) and add rate
-  // limiting. Until a destination is chosen the signup is validated only.
+  const h = await headers();
+  const ip = h.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  if (rateLimited(ip)) {
+    return {
+      status: "error",
+      message: "Too many attempts. Please wait a few minutes and try again.",
+      values,
+    };
+  }
+
+  // Store as E.164 (+94771234567); the unique index on it blocks duplicates.
+  const e164 = `+94${phone.replace(/^0/, "")}`;
+  const result = await saveSignup({
+    name,
+    shop,
+    phone: e164,
+    channels,
+    sells,
+    link: link || null,
+  });
+
+  if (!result.ok) {
+    return {
+      status: "error",
+      message: "We couldn’t submit your signup. Please try again.",
+      values,
+    };
+  }
+
+  // A repeat signup with the same number is treated as success, without
+  // revealing whether the number was already on the list.
   return { status: "success" };
 }
