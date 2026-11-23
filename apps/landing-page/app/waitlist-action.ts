@@ -15,6 +15,11 @@ export type WaitlistState = {
 const SELLS = ["Clothing", "Jewellery", "Accessories", "Other"];
 const CHANNELS = ["Instagram", "WhatsApp", "Messenger", "Other"];
 
+// Must match the check constraints in supabase/migrations/*_waitlist_signups.sql
+const MAX_NAME = 120;
+const MAX_SHOP = 120;
+const MAX_LINK = 300;
+
 /* Light per-IP rate limit. In-memory, so it is per server instance (good enough
    to stop a loop hammering the form; put a shared store such as Upstash or
    Vercel KV behind it if abuse becomes real). */
@@ -51,13 +56,18 @@ export async function joinWaitlist(
   const errors: NonNullable<WaitlistState["errors"]> = {};
 
   if (!name) errors.name = "Enter your name.";
+  else if (name.length > MAX_NAME) errors.name = `Keep your name under ${MAX_NAME} characters.`;
   if (!shop) errors.shop = "Enter your shop name.";
+  else if (shop.length > MAX_SHOP)
+    errors.shop = `Keep your shop name under ${MAX_SHOP} characters.`;
   if (!/^\d{9}$/.test(phone.replace(/^0/, "")))
     errors.phone = "Enter a valid Sri Lankan number, for example 77 123 4567.";
   if (!channels.length || !channels.every((c) => CHANNELS.includes(c)))
     errors.channels = "Choose at least one.";
   if (!SELLS.includes(sells)) errors.sells = "Choose what you sell.";
-  if (link) {
+  if (link.length > MAX_LINK) {
+    errors.link = `Keep the link under ${MAX_LINK} characters.`;
+  } else if (link) {
     try {
       const url = new URL(
         /^https?:\/\//i.test(link) ? link : `https://${link}`,

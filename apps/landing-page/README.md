@@ -56,7 +56,7 @@ npm run db:reset        # applies supabase/migrations (creates waitlist_signups)
 For a hosted project, link it and push the migration instead
 (`npx supabase link`, then `npx supabase db push`).
 
-Copy `.env.example` to `.env.local` and fill in `SUPABASE_URL` and
+Copy `.env.example` to `.env.local` and fill in `NEXT_PUBLIC_SUPABASE_URL` and
 `SUPABASE_SERVICE_ROLE_KEY`. The service-role key is server-only; never expose
 it with a `NEXT_PUBLIC_` prefix. The table has row level security on with no
 policies, so the public API keys cannot read or write it.
@@ -73,16 +73,40 @@ const SECRET = "change-me"; // same value as WAITLIST_SHEET_TOKEN
 
 function doPost(e) {
   const data = JSON.parse(e.postData.contents);
-  if (data.token !== SECRET) return ContentService.createTextOutput("forbidden");
+  if (data.token !== SECRET)
+    return ContentService.createTextOutput("forbidden");
 
   const ss = SpreadsheetApp.getActive();
   const sheet = ss.getSheetByName("Waitlist") || ss.insertSheet("Waitlist");
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(["Signed up", "Name", "Shop", "WhatsApp", "Channels", "Sells", "Link"]);
+    sheet.appendRow([
+      "Signed up",
+      "Name",
+      "Shop",
+      "WhatsApp",
+      "Channels",
+      "Sells",
+      "Link",
+    ]);
   }
-  // The leading ' keeps +94… as text instead of a number.
-  sheet.appendRow([data.createdAt, data.name, data.shop, "'" + data.phone, data.channels, data.sells, data.link]);
+  // Every user-supplied value is stored as literal text. The leading ' stops
+  // Sheets treating =, +, -, @ values as formulas (and keeps +94… as text).
+  sheet.appendRow([
+    data.createdAt,
+    asText(data.name),
+    asText(data.shop),
+    asText(data.phone),
+    asText(data.channels),
+    asText(data.sells),
+    asText(data.link),
+  ]);
   return ContentService.createTextOutput("ok");
+}
+
+function asText(value) {
+  if (value === null || value === undefined) return "";
+  const text = Array.isArray(value) ? value.join(", ") : String(value);
+  return "'" + text;
 }
 ```
 
